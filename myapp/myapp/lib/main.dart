@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/main/accounts.dart';
 import 'package:myapp/main/bottomNav.dart';
 import 'package:myapp/main/drawer.dart';
+import 'package:myapp/main/mainAccount.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,13 +19,10 @@ class MyApp extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: Scaffold(
-            appBar: AppBar(
-              title: Text('小店'),
-            ),
-            body: ExpandAccounts(),
+            body: AccountMain(),
             floatingActionButton: FloatingActionButton(
               onPressed: () {},
-              child: Text('+'),
+              child: Icon(Icons.add),
             ),
             drawer: MainDrawer(),
             bottomNavigationBar: MainBottomNav()));

@@ -1,61 +1,81 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ExpandAccounts extends StatefulWidget {
+class SliverAccounts extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => ExpandAccountsState();
+  State<StatefulWidget> createState() => SliverAccountsState();
 }
 
-class ExpandAccountsState extends State<ExpandAccounts> {
+class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar child;
+  StickyTabBarDelegate({@required this.child});
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Column(
-          children: [
-            ExpansionPanelList(
-              children: [
-                ExpansionPanel(
-                    isExpanded: true,
-                    body: Container(
-                      padding: EdgeInsets.all(16.0),
-                      child: Container(
-                        width: 600,
-                        height: 300,
-                        child: MainAccounts(),
-                      ),
-                    ),
-                    headerBuilder: (BuildContext context, bool isExpanded) {
-                      return ListTile(
-                        title: Text('data'),
-                      );
-                    }),
-              ],
-              expansionCallback: (panelIndex, isExpanded) => {},
-            )
-          ],
-        ),
-      ),
-    );
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return this.child;
+  }
+
+  @override
+  double get maxExtent => this.child.preferredSize.height;
+
+  @override
+  double get minExtent => this.child.preferredSize.height;
+
+  @override
+  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }
 
-class MainAccounts extends StatelessWidget {
+class SliverAccountsState extends State<SliverAccounts>
+    with SingleTickerProviderStateMixin {
+  TabController tabController;
+  @override
+  void initState() {
+    super.initState();
+    this.tabController = TabController(length: 2, vsync: this);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: 10,
-      separatorBuilder: (context, index) => Divider(),
-      itemBuilder: (context, index) => ListTile(
-        isThreeLine: true,
-        title:
-            Text('支付宝、微信支付是开发中经常需要用到的功能，那么如何集成支付功能到应用中呢？支付结果亦是异步的，又如何传递结果呢？'),
-        subtitle: Text('2020-09-21'),
-        dense: true,
-        leading: Icon(Icons.add, color: Colors.green),
-        trailing: Icon(Icons.keyboard_arrow_right),
-        onTap: () {},
-        onLongPress: () {},
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            elevation: 0,
+            expandedHeight: 150,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text('我是是是是是是是是是是是标题'),
+              background: Image.network(
+                'http://img1.mukewang.com/5c18cf540001ac8206000338.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: StickyTabBarDelegate(
+              child: TabBar(
+                labelColor: Colors.black,
+                controller: this.tabController,
+                tabs: <Widget>[
+                  Tab(text: 'Home'),
+                  Tab(text: 'Profile'),
+                ],
+              ),
+            ),
+          ),
+          SliverFillRemaining(
+            child: TabBarView(
+              controller: this.tabController,
+              children: <Widget>[
+                Center(child: Text('Content of Home')),
+                Center(child: Text('Content of Profile')),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
