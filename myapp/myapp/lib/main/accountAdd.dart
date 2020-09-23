@@ -12,36 +12,38 @@ class AccountAddState extends State<AccountAdd> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('记账'),
-        leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => {Navigator.pop(context)}),
-      ),
-      body: Form(
-          child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('记账'),
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () => {Navigator.pop(context)}),
+        ),
+        body: Column(
           children: [
             Expanded(
-              child: TextFormField(
-                decoration: new InputDecoration(
-                    labelText: 'Your Name', icon: Icon(Icons.person)),
-                onSaved: (val) {},
+              child: CustomScrollView(
+                scrollDirection: Axis.horizontal,
+                slivers: [
+                  SliverGrid(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 8),
+                    delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                      return Container(
+                        color:
+                            Colors.primaries[index % Colors.primaries.length],
+                      );
+                    }, childCount: 20),
+                  )
+                ],
               ),
+              flex: 2,
             ),
-            Expanded(
-              child: TextFormField(
-                decoration: new InputDecoration(
-                  labelText: 'Your Name',
-                ),
-                onSaved: (val) {},
-              ),
-            )
+            Expanded(child: Text('data')),
           ],
-        ),
-      )),
-    );
+        ));
   }
 }
