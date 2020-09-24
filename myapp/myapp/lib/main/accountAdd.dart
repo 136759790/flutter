@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/db/db_manager.dart';
 
 class AccountAdd extends StatefulWidget {
   @override
@@ -138,9 +139,13 @@ class AccountAddState extends State<AccountAdd>
                   child: Container(
                 alignment: Alignment.center,
                 decoration:
-                    BoxDecoration(border: _getBorder(true, true, true, true)),
+                    BoxDecoration(border: _getBorder(false, true, true, true)),
                 child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('7')),
+                  child: FlatButton(
+                      onPressed: () {
+                        DBManager.init();
+                      },
+                      child: Text('7')),
                 ),
               )),
               Expanded(
@@ -184,7 +189,7 @@ class AccountAddState extends State<AccountAdd>
                   child: Container(
                 alignment: Alignment.center,
                 decoration:
-                    BoxDecoration(border: _getBorder(true, true, true, true)),
+                    BoxDecoration(border: _getBorder(false, false, true, true)),
                 child: SizedBox.expand(
                   child: FlatButton(onPressed: () {}, child: Text('4')),
                 ),
@@ -193,7 +198,7 @@ class AccountAddState extends State<AccountAdd>
                   child: Container(
                 alignment: Alignment.center,
                 decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
+                    BoxDecoration(border: _getBorder(false, false, true, true)),
                 child: SizedBox.expand(
                   child: FlatButton(onPressed: () {}, child: Text('5')),
                 ),
@@ -201,7 +206,7 @@ class AccountAddState extends State<AccountAdd>
               Expanded(
                   child: Container(
                 decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
+                    BoxDecoration(border: _getBorder(false, false, true, true)),
                 alignment: Alignment.center,
                 child: SizedBox.expand(
                   child: FlatButton(onPressed: () {}, child: Text('6')),
@@ -210,7 +215,7 @@ class AccountAddState extends State<AccountAdd>
               Expanded(
                   child: Container(
                 decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
+                    BoxDecoration(border: _getBorder(false, false, true, true)),
                 alignment: Alignment.center,
                 child: SizedBox.expand(
                   child: FlatButton(
