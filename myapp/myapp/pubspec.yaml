@@ -47,8 +47,15 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
-    - lib/assets/main/bg_flower.jpg
-
+    - assets/images/bg_flower.jpg
+    - assets/sql/icon_data.sql
+    - assets/sql/icon.sql
+    - assets/sql/user_icon_data.sql
+    - assets/sql/user_icon.sql
+  # fonts:
+  #   - family: IconFonts
+  #     fonts:
+  #       - assets/icons/iconfont.ttf
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
