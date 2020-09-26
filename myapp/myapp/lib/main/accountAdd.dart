@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/db/db_manager.dart';
-import 'package:myapp/model/icon.dart';
+import 'package:myapp/models/icon.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountAdd extends StatefulWidget {
