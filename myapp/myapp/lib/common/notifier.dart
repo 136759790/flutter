@@ -17,11 +17,8 @@ class UserModel extends ProfileChangeNotifier {
   User get user => _profile.user;
   bool get isLogin => user != null;
   set user(User user) {
-    if (user?.phone != _profile.user?.phone) {
-      _profile.lastLogin = _profile.user?.phone;
-      _profile.user = user;
-      notifyListeners();
-    }
+    _profile.user = user;
+    notifyListeners();
   }
 }
 

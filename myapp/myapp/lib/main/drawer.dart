@@ -24,7 +24,7 @@ class MainDrawer extends StatelessWidget {
             decoration: BoxDecoration(
                 image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage('lib/assets/main/bg_flower.jpg'))),
+                    image: AssetImage('assets/images/bg_flower.jpg'))),
           ),
           ListTile(title: Text('用户反馈'), trailing: Icon(Icons.feedback)),
           ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/models/user.dart';
 
 class LoginRoute extends StatefulWidget {
   @override
@@ -7,6 +8,8 @@ class LoginRoute extends StatefulWidget {
 }
 
 class _LoginRouteState extends State<LoginRoute> {
+  TextEditingController _uname = TextEditingController();
+  TextEditingController _pwd = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -25,6 +28,7 @@ class _LoginRouteState extends State<LoginRoute> {
           child: Column(
             children: [
               TextFormField(
+                controller: _uname,
                 decoration: InputDecoration(
                     labelText: '手机号',
                     hintText: '请输入手机号码',
@@ -33,6 +37,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     value.trim().isNotEmpty ? null : '手机号码不能为空',
               ),
               TextFormField(
+                controller: _pwd,
                 decoration: InputDecoration(
                     labelText: '密码',
                     hintText: '请输入密码',
@@ -42,7 +47,9 @@ class _LoginRouteState extends State<LoginRoute> {
               Padding(
                 padding: EdgeInsets.all(40),
                 child: FlatButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    print(_uname.text);
+                  },
                   child: Text('登录'),
                   color: Theme.of(context).primaryColor,
                 ),

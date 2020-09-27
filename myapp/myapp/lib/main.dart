@@ -7,6 +7,7 @@ import 'package:myapp/main/btnAdd.dart';
 import 'package:myapp/main/drawer.dart';
 import 'package:myapp/main/mainAccount.dart';
 import 'package:myapp/routes/home.dart';
+import 'package:myapp/routes/login.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
               const Locale('zh', 'CN'),
             ],
             routes: {
-              "login": (context) => HomeRoute(),
+              "login": (context) => LoginRoute(),
               "theme": (context) => HomeRoute(),
               "language": (context) => HomeRoute(),
             },

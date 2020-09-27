@@ -13,12 +13,12 @@ const _themes = <MaterialColor>[
 ];
 
 class Global {
+  static String cookie;
   static SharedPreferences _prefs;
   static List<MaterialColor> get themes => _themes;
   static Profile profile = Profile();
   static bool get isRelease =>
       bool.fromEnvironment("dart.vm.product"); //是否release版本
-
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
     var _profile = _prefs.getString("profile");
