@@ -5,10 +5,10 @@ part 'result.g.dart';
 @JsonSerializable()
 class Result {
   int code;
-  Map<String, dynamic> data;
+  var data;
   String msg, msgDetail;
   int status;
-  Result();
+  Result(this.data);
 
   factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
   Map<String, dynamic> toJson() => _$ResultToJson(this);

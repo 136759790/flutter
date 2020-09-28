@@ -1,18 +1,20 @@
 import 'package:dio/dio.dart';
-import 'package:myapp/common/api.dart';
+import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
 
 class UserApi {
   static Future<bool> isLogin() async {
-    Response res = await Api.api.get('sys/isLogin');
-    Map data = new Map<String, dynamic>.from(res.data);
-    return data['data'];
+    Response res = await dio.get('sys/isLogin');
+    return res.data['data'];
   }
 
-  static Future<bool> login(username, password) async {
-    Response<Map<String, dynamic>> res =
-        await Api.api.post('user/login', data: {username, password});
-    Map data = new Map<String, dynamic>.from(res.data);
-    return false;
+  static Future<Result> login(username, password) async {
+    Map data = new Map();
+    data['username'] = username;
+    data['password'] = password;
+    Response res = await dio.post('user/login', data: data);
+    print(res);
+    Result result = Result.fromJson(res.data);
+    return result;
   }
 }

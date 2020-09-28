@@ -13,7 +13,6 @@ const _themes = <MaterialColor>[
 ];
 
 class Global {
-  static String cookie;
   static SharedPreferences _prefs;
   static List<MaterialColor> get themes => _themes;
   static Profile profile = Profile();

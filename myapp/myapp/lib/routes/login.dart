@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/api/user.dart';
+import 'package:myapp/common/notifier.dart';
 import 'package:myapp/models/user.dart';
+import 'package:provider/provider.dart';
 
 class LoginRoute extends StatefulWidget {
   @override
@@ -8,6 +11,7 @@ class LoginRoute extends StatefulWidget {
 }
 
 class _LoginRouteState extends State<LoginRoute> {
+  GlobalKey _formKey = new GlobalKey<FormState>();
   TextEditingController _uname = TextEditingController();
   TextEditingController _pwd = TextEditingController();
   @override
@@ -24,6 +28,7 @@ class _LoginRouteState extends State<LoginRoute> {
       body: Padding(
         padding: EdgeInsets.all(20),
         child: Form(
+          key: _formKey,
           autovalidate: true,
           child: Column(
             children: [
@@ -48,7 +53,15 @@ class _LoginRouteState extends State<LoginRoute> {
                 padding: EdgeInsets.all(40),
                 child: FlatButton(
                   onPressed: () {
-                    print(_uname.text);
+                    if ((_formKey.currentState as FormState).validate()) {
+                      UserApi.login(_uname.text, _pwd.text).then((data) {
+                        if (data.status == 1) {
+                          Provider.of<UserModel>(context, listen: false).user =
+                              new User(_uname.text, _pwd.text);
+                          Navigator.pushNamed(context, 'home');
+                        }
+                      });
+                    }
                   },
                   child: Text('登录'),
                   color: Theme.of(context).primaryColor,

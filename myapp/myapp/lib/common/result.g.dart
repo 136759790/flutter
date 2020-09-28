@@ -7,9 +7,10 @@ part of 'result.dart';
 // **************************************************************************
 
 Result _$ResultFromJson(Map<String, dynamic> json) {
-  return Result()
+  return Result(
+    json['data'],
+  )
     ..code = json['code'] as int
-    ..data = json['data'] as Map<String, dynamic>
     ..msg = json['msg'] as String
     ..msgDetail = json['msgDetail'] as String
     ..status = json['status'] as int;

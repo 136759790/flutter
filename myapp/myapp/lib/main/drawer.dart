@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:myapp/common/notifier.dart';
+import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
@@ -10,7 +12,7 @@ class MainDrawer extends StatelessWidget {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              '赵晓腾',
+              '${Provider.of<UserModel>(context).user.username}',
               style: TextStyle(color: Colors.black),
             ),
             accountEmail: Text(
@@ -30,7 +32,13 @@ class MainDrawer extends StatelessWidget {
           ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),
           ListTile(title: Text('我要发布'), trailing: Icon(Icons.send)),
           Divider(),
-          ListTile(title: Text('注销'), trailing: Icon(Icons.exit_to_app)),
+          ListTile(
+            title: Text('切换账号'),
+            trailing: Icon(Icons.exit_to_app),
+            onTap: () {
+              Navigator.pushNamed(context, 'login');
+            },
+          ),
         ],
       ),
     );
