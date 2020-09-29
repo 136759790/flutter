@@ -14,10 +14,26 @@ class AccountAdd extends StatefulWidget {
 class AccountAddState extends State<AccountAdd>
     with SingleTickerProviderStateMixin {
   TabController tabController;
+  List<Map> icons = new List();
+  bool _showKeyboard = false;
+  Color _inactive = Colors.black12;
+  Color _active = Colors.blue;
+  int _active_index = -1;
   @override
   void initState() {
     super.initState();
     this.tabController = TabController(length: 2, vsync: this);
+    DBManager.getDb().then((db) {
+      db
+          .rawQuery(
+              'select i.* from user_icon u left join icon i on u.icon_id = i.id order by id asc;')
+          .then((data) {
+        print(data.toString());
+        this.setState(() {
+          icons = data;
+        });
+      });
+    });
   }
 
   Future<List<IconModel>> getIconList() async {
@@ -73,20 +89,30 @@ class AccountAddState extends State<AccountAdd>
                                     height: 50,
                                     child: IconButton(
                                       icon: Icon(
-                                        Icons.scatter_plot,
+                                        IconData(
+                                            int.parse(icons[index]['code']),
+                                            fontFamily: 'IconFonts'),
+                                        color: _active_index == index
+                                            ? _active
+                                            : _inactive,
                                         size: 30,
                                       ),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        setState(() {
+                                          _showKeyboard = true;
+                                          _active_index = index;
+                                        });
+                                      },
                                     ),
                                     decoration: BoxDecoration(
                                         color: Colors.grey[300],
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(100))),
                                   ),
-                                  Text('餐饮')
+                                  Text(icons[index]['title'])
                                 ],
                               );
-                            }, childCount: 50),
+                            }, childCount: icons.length),
                           )
                         ],
                       );
@@ -96,11 +122,8 @@ class AccountAddState extends State<AccountAdd>
             ],
             controller: this.tabController,
           )),
-          Expanded(
-              child: Offstage(
-            offstage: false,
-            child: this._keyboard(),
-          ))
+          Visibility(
+              visible: _showKeyboard, child: Expanded(child: _keyboard()))
         ]));
   }
 

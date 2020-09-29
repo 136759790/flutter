@@ -13,6 +13,7 @@ class DBManager {
     if (Platform.isIOS) {
       path = dbPath + "/" + DBNAME;
     }
+    print('db path=$path');
     _db = await openDatabase(
       path,
       version: 1,
@@ -50,4 +51,6 @@ class DBManager {
         "select * from Sqlite_master where type = 'table' and name = '$name'");
     return res != null && res.length > 0;
   }
+
+  static reset() async {}
 }

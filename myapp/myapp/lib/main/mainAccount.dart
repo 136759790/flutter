@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -271,6 +272,32 @@ class AccountMainState extends State<AccountMain> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _lineChart() {
+    return Card(
+      child: Column(children: [
+        ListTile(
+          title: Text('近三个月流水'),
+        ),
+        LineChart(LineChartData(
+            borderData: FlBorderData(
+                show: true,
+                border: Border.all(color: const Color(0xff37434d), width: 1)),
+            titlesData: FlTitlesData(
+              show: true,
+            ),
+            lineBarsData: [
+              LineChartBarData(show: true, spots: [
+                FlSpot(1, 1.4),
+                FlSpot(2, 2.4),
+                FlSpot(3, 3.4),
+                FlSpot(4, 4.4),
+                FlSpot(5, 5.4),
+              ])
+            ])),
+      ]),
     );
   }
 }

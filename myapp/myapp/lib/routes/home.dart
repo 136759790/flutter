@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/user.dart';
-import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/result.dart';
 import 'package:myapp/main/bottomNav.dart';

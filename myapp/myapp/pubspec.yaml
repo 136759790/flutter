@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite: ^1.3.1+1
+  fl_chart: ^0.11.1
   fluttertoast: ^7.1.1
   dio: ^3.0.10
   dio_cookie_manager: ^1.0.0
@@ -54,6 +55,10 @@ flutter:
     - assets/sql/icon.sql
     - assets/sql/user_icon_data.sql
     - assets/sql/user_icon.sql
+  fonts: 
+    - family: IconFonts
+      fonts:
+        - asset: assets/icons/iconfont.ttf
   # fonts:
   #   - family: IconFonts
   #     fonts:

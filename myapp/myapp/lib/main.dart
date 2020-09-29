@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/common/http.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/routes/home.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:provider/provider.dart';
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  var cookieJar = CookieJar();
-  dio.interceptors.add(CookieManager(cookieJar));
   Global.init().then((value) => runApp(MyApp()));
 }
 
