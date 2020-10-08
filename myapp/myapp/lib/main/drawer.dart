@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
 class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print(Provider.of<UserNotifier>(context).user.toString());
     return Drawer(
       child: ListView(
         padding: EdgeInsets.all(0),
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              '${Provider.of<UserModel>(context).user.username}',
+              '${Provider.of<UserNotifier>(context).user.name}',
               style: TextStyle(color: Colors.black),
             ),
             accountEmail: Text(
@@ -28,7 +30,18 @@ class MainDrawer extends StatelessWidget {
                     fit: BoxFit.cover,
                     image: AssetImage('assets/images/bg_flower.jpg'))),
           ),
-          ListTile(title: Text('用户反馈'), trailing: Icon(Icons.feedback)),
+          ListTile(
+            title: Text('切换项目'),
+            subtitle: Text('旋转小火锅'),
+            trailing: Icon(Icons.swap_vertical_circle),
+            onTap: () {
+              print('switch project');
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new SwitchProject()));
+            },
+          ),
           ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),
           ListTile(title: Text('我要发布'), trailing: Icon(Icons.send)),
           Divider(),

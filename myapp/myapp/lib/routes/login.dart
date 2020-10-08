@@ -56,8 +56,12 @@ class _LoginRouteState extends State<LoginRoute> {
                     if ((_formKey.currentState as FormState).validate()) {
                       UserApi.login(_uname.text, _pwd.text).then((data) {
                         if (data.status == 1) {
-                          Provider.of<UserModel>(context, listen: false).user =
-                              new User(_uname.text, _pwd.text);
+                          var map = data.data;
+                          map['password'] = _pwd.text;
+                          map['account'] = _uname.text;
+                          print('map=>$map');
+                          Provider.of<UserNotifier>(context, listen: false)
+                              .user = User.fromJson(map);
                           Navigator.pushNamed(context, 'home');
                         }
                       });

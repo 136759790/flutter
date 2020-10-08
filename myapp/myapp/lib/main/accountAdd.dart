@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/icon.dart';
-import 'package:sqflite/sqflite.dart';
 
 class AccountAdd extends StatefulWidget {
   @override
@@ -19,6 +18,7 @@ class AccountAddState extends State<AccountAdd>
   Color _inactive = Colors.black12;
   Color _active = Colors.blue;
   int _active_index = -1;
+  bool _showNumKey = true;
   @override
   void initState() {
     super.initState();
@@ -65,65 +65,71 @@ class AccountAddState extends State<AccountAdd>
             ],
           ),
           Expanded(
-              child: TabBarView(
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(8, 20, 8, 10),
-                child: FutureBuilder<List<IconModel>>(
-                    future: null,
-                    builder: (context, snapshot) {
-                      return CustomScrollView(
-                        slivers: [
-                          SliverGrid(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 4,
-                                    crossAxisSpacing: 1,
-                                    mainAxisSpacing: 1),
-                            delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        IconData(
-                                            int.parse(icons[index]['code']),
-                                            fontFamily: 'IconFonts'),
-                                        color: _active_index == index
-                                            ? _active
-                                            : _inactive,
-                                        size: 30,
+            child: TabBarView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 20, 8, 10),
+                  child: FutureBuilder<List<IconModel>>(
+                      future: null,
+                      builder: (context, snapshot) {
+                        return CustomScrollView(
+                          slivers: [
+                            SliverGrid(
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4,
+                                      crossAxisSpacing: 1,
+                                      mainAxisSpacing: 1),
+                              delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          IconData(
+                                              int.parse(icons[index]['code']),
+                                              fontFamily: 'IconFonts'),
+                                          color: _active_index == index
+                                              ? _active
+                                              : _inactive,
+                                          size: 30,
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _showKeyboard = true;
+                                            _active_index = index;
+                                          });
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _showKeyboard = true;
-                                          _active_index = index;
-                                        });
-                                      },
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(100))),
                                     ),
-                                    decoration: BoxDecoration(
-                                        color: Colors.grey[300],
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(100))),
-                                  ),
-                                  Text(icons[index]['title'])
-                                ],
-                              );
-                            }, childCount: icons.length),
-                          )
-                        ],
-                      );
-                    }),
-              ),
-              Text('data'),
-            ],
-            controller: this.tabController,
-          )),
+                                    Text(icons[index]['title'])
+                                  ],
+                                );
+                              }, childCount: icons.length),
+                            )
+                          ],
+                        );
+                      }),
+                ),
+                Text('data'),
+              ],
+              controller: this.tabController,
+            ),
+            flex: 5,
+          ),
           Visibility(
-              visible: _showKeyboard, child: Expanded(child: _keyboard()))
+              visible: _showKeyboard,
+              child: Expanded(
+                child: _keyboard(),
+                flex: _showNumKey ? 5 : 1,
+              ))
         ]));
   }
 
@@ -131,229 +137,253 @@ class AccountAddState extends State<AccountAdd>
     return Column(
       children: [
         Expanded(
-            child: Row(
-          children: [
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+          child: Column(
+            children: [
+              Expanded(
+                  child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      '备注:',
-                      style: TextStyle(fontSize: 18),
+                  Expanded(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '备注:',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                        )
+                      ],
                     ),
+                    flex: 2,
+                  ),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                          hintText: '点击填写备注', border: InputBorder.none),
+                      autocorrect: true,
+                      maxLength: 16,
+                      onTap: () {
+                        setState(() {
+                          this._showNumKey = false;
+                        });
+                      },
+                      keyboardType:
+                          TextInputType.numberWithOptions(decimal: true),
+                    ),
+                    flex: 8,
+                  ),
+                  Expanded(
+                    child: Text(
+                      '0.00',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    flex: 2,
                   )
                 ],
-              ),
-              flex: 2,
+              ))
+            ],
+          ),
+          flex: 1,
+        ),
+        Visibility(
+          visible: _showNumKey,
+          child: Expanded(
+            child: Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, true, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(
+                              onPressed: () {
+                                DBManager.init();
+                              },
+                              child: Text('7')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, true, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('8')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, true, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('9')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, true, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton.icon(
+                            onPressed: () {},
+                            label: Text('今天'),
+                            icon: Icon(Icons.date_range),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('4')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('5')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('6')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(
+                            onPressed: () {},
+                            child: Icon(Icons.add),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(true, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('1')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('2')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('3')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(
+                            onPressed: () {},
+                            child: Icon(Icons.remove),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(true, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('.')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        child: SizedBox.expand(
+                          child: FlatButton(onPressed: () {}, child: Text('0')),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(
+                              onPressed: () {}, child: Icon(Icons.backspace)),
+                        ),
+                      )),
+                      Expanded(
+                          child: Container(
+                        decoration: BoxDecoration(
+                            border: _getBorder(false, false, true, true)),
+                        alignment: Alignment.center,
+                        child: SizedBox.expand(
+                          child: FlatButton(
+                            onPressed: () {
+                              IconModel.getAllIcons();
+                            },
+                            child: Text('完成'),
+                          ),
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: TextField(
-                decoration: InputDecoration(
-                    hintText: '点击填写备注', border: InputBorder.none),
-                autocorrect: true,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-              ),
-              flex: 8,
-            ),
-            Expanded(
-              child: Text(
-                '0.00',
-                style: TextStyle(fontSize: 20),
-              ),
-              flex: 2,
-            )
-          ],
-        )),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(
-                      onPressed: () {
-                        DBManager.init();
-                      },
-                      child: Text('7')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('8')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('9')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, true, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton.icon(
-                    onPressed: () {},
-                    label: Text('今天'),
-                    icon: Icon(Icons.date_range),
-                  ),
-                ),
-              )),
-            ],
+            flex: 4,
           ),
-        ),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('4')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('5')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('6')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(
-                    onPressed: () {},
-                    child: Icon(Icons.add),
-                  ),
-                ),
-              )),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(true, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('1')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('2')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('3')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(
-                    onPressed: () {},
-                    child: Icon(Icons.remove),
-                  ),
-                ),
-              )),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Row(
-            children: [
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(true, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('.')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                alignment: Alignment.center,
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                child: SizedBox.expand(
-                  child: FlatButton(onPressed: () {}, child: Text('0')),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(
-                      onPressed: () {}, child: Icon(Icons.backspace)),
-                ),
-              )),
-              Expanded(
-                  child: Container(
-                decoration:
-                    BoxDecoration(border: _getBorder(false, false, true, true)),
-                alignment: Alignment.center,
-                child: SizedBox.expand(
-                  child: FlatButton(
-                    onPressed: () {
-                      IconModel.getAllIcons();
-                    },
-                    child: Text('完成'),
-                  ),
-                ),
-              )),
-            ],
-          ),
-        ),
+        )
       ],
     );
   }

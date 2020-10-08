@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:myapp/api/user.dart';
+import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/result.dart';
 import 'package:myapp/main/bottomNav.dart';
@@ -10,6 +14,7 @@ import 'package:myapp/main/drawer.dart';
 import 'package:myapp/main/mainAccount.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/login.dart';
+import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -21,12 +26,14 @@ class _HomeRouteState extends State<HomeRoute> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _login(Provider.of<UserModel>(context).user),
+      future: _login(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          print(snapshot.toString());
-          if (!snapshot.hasData) {
+          String id = Hive.box(Global.CONFIG).get('project');
+          if (!snapshot.data) {
             return LoginRoute();
+          } else if (id == null || id.isEmpty) {
+            return SwitchProject();
           } else {
             return Scaffold(
                 body: AccountMain(),
@@ -35,9 +42,10 @@ class _HomeRouteState extends State<HomeRoute> {
                 bottomNavigationBar: MainBottomNav());
           }
         } else {
-          return SizedBox(
-            height: 3,
-            child: CircularProgressIndicator(),
+          return Center(
+            child: CircularProgressIndicator(
+              backgroundColor: Colors.greenAccent.shade700,
+            ),
           );
         }
       },
@@ -45,13 +53,17 @@ class _HomeRouteState extends State<HomeRoute> {
   }
 }
 
-Future _login(User user) async {
+Future _login() async {
   bool isLogin = await UserApi.isLogin();
   if (!isLogin) {
-    if (user == null || user.username == null || user.password == null) {
+    String userInfo = Hive.box(Global.CONFIG).get('user');
+    print('object---->$userInfo');
+    User user = User.fromJson(json.decode(userInfo));
+    print(user.toString());
+    if (user.account == null || user.password == null) {
       return false;
     } else {
-      Result result = await UserApi.login(user.username, user.password);
+      Result result = await UserApi.login(user.account, user.password);
       return result.status == 1;
     }
   } else {

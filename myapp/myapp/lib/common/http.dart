@@ -8,6 +8,7 @@ var $ = Http();
 class Http {
   var cookieJar = CookieJar();
   var dio = new Dio(new BaseOptions(
+      responseType: ResponseType.json,
       contentType: Headers.jsonContentType,
       baseUrl: 'http://api.grelove.com/',
       connectTimeout: 5000,

@@ -9,6 +9,31 @@ class AccountMain extends StatefulWidget {
 }
 
 class AccountMainState extends State<AccountMain> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text(
+      //     '小店记账',
+      //   ),
+      //   centerTitle: true,
+      //   leading: Icon(Icons.settings),
+      // ),
+      body: Container(
+        child: Column(
+          children: [
+            // this._sectionTitle(),
+            Expanded(
+              child: Row(
+                children: [Expanded(child: this._sectionList())],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _chooseDate(BuildContext context) async {
     Picker(
         adapter: DateTimePickerAdapter(
@@ -247,31 +272,6 @@ class AccountMainState extends State<AccountMain> {
           );
         }
       }, childCount: 150),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(
-      //     '小店记账',
-      //   ),
-      //   centerTitle: true,
-      //   leading: Icon(Icons.settings),
-      // ),
-      body: Container(
-        child: Column(
-          children: [
-            // this._sectionTitle(),
-            Expanded(
-              child: Row(
-                children: [Expanded(child: this._sectionList())],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 

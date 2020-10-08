@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/routes/home.dart';
@@ -15,22 +16,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: ThemeModel()),
-        ChangeNotifierProvider.value(value: UserModel()),
-        ChangeNotifierProvider.value(value: LocaleModel()),
+        ChangeNotifierProvider.value(value: UserNotifier()),
       ],
-      child: Consumer2<ThemeModel, LocaleModel>(
-        builder: (context, themeModel, localeModel, child) {
+      child: Consumer<UserNotifier>(
+        builder: (context, user, child) {
           return MaterialApp(
             title: '小店',
-            theme: ThemeData(
-              primarySwatch: themeModel.theme,
-            ),
             home: HomeRoute(),
-            locale: localeModel.getLocale(),
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate
+            ],
             supportedLocales: [
-              const Locale('en', 'US'),
               const Locale('zh', 'CN'),
+              const Locale('en', 'US'),
             ],
             routes: {
               "login": (context) => LoginRoute(),
