@@ -1,10 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBManager {
-  static const DBNAME = "xiaodian";
+  static const DBNAME = "zhaoxt";
   static Database _db;
 
   static init() async {
@@ -16,19 +17,13 @@ class DBManager {
     print('db path=$path');
     _db = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
-        String sql_icon = await rootBundle.loadString('assets/sql/icon.sql');
-        await db.execute(sql_icon);
-        String sql_user_icon =
-            await rootBundle.loadString('assets/sql/user_icon.sql');
-        await db.execute(sql_user_icon);
-        String sql_icon_data =
-            await rootBundle.loadString('assets/sql/icon_data.sql');
-        await db.execute(sql_icon_data);
-        String sql_user_icon_data =
-            await rootBundle.loadString('assets/sql/user_icon_data.sql');
-        await db.execute(sql_user_icon_data);
+        String dataStr = await rootBundle.loadString('assets/data/sql.json');
+        List<dynamic> data = json.decode(dataStr);
+        for (var i = 0; i < data.length; i++) {
+          await db.execute(data[i].toString());
+        }
       },
     );
   }

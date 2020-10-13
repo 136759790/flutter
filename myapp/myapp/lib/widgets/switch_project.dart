@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/project.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SwitchProject extends StatefulWidget {
   @override
@@ -30,58 +32,80 @@ class SwitchProjectState extends State<SwitchProject> {
           )
         ],
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverSafeArea(
-              sliver: SliverPadding(
-            padding: EdgeInsets.all(8),
-            sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-              return GestureDetector(
-                onTap: () {
-                  showDialog(
-                      context: context,
-                      child: AlertDialog(
-                        title: Text('提示'),
-                        content: Text('要切换到项目【旋转小火锅吗】?'),
-                        actions: [
-                          FlatButton(
-                              onPressed: () => Navigator.pop(context, "cancel"),
-                              child: Text('取消')),
-                          FlatButton(
-                            onPressed: () => Navigator.pop(context, "cancel"),
-                            child: Text('确定'),
+      body: FutureBuilder<dynamic>(
+          future: _futureProjects(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              List<Map<String, dynamic>> result = snapshot.data;
+              print('object---$result');
+              return CustomScrollView(
+                slivers: [
+                  SliverSafeArea(
+                      sliver: SliverPadding(
+                    padding: EdgeInsets.all(8),
+                    sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              child: AlertDialog(
+                                title: Text('提示'),
+                                content: Text('要切换到项目【旋转小火锅吗】?'),
+                                actions: [
+                                  FlatButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, "cancel"),
+                                      child: Text('取消')),
+                                  FlatButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, "cancel"),
+                                    child: Text('确定'),
+                                  ),
+                                ],
+                              ));
+                        },
+                        child: Card(
+                          child: Column(
+                            children: [
+                              ListTile(
+                                leading: Icon(Icons.access_alarm),
+                                trailing: Icon(
+                                  Icons.delete,
+                                  color: Colors.redAccent,
+                                ),
+                                title: Text(result[index]['name']),
+                              ),
+                              Divider(),
+                              ListTile(
+                                title: Text('本月支出：96732元'),
+                              ),
+                              ListTile(
+                                title: Text('本月营收：96732元'),
+                              )
+                            ],
                           ),
-                        ],
-                      ));
-                },
-                child: Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: Icon(Icons.access_alarm),
-                        trailing: Icon(
-                          Icons.delete,
-                          color: Colors.redAccent,
                         ),
-                        title: Text('旋转小火锅'),
-                      ),
-                      Divider(),
-                      ListTile(
-                        title: Text('本月支出：96732元'),
-                      ),
-                      ListTile(
-                        title: Text('本月营收：96732元'),
-                      )
-                    ],
-                  ),
-                ),
+                      );
+                    }, childCount: result.length)),
+                  ))
+                ],
               );
-            }, childCount: 10)),
-          ))
-        ],
-      ),
+            } else {
+              return Padding(
+                padding: EdgeInsets.all(20),
+                child: CircularProgressIndicator(),
+              );
+            }
+          }),
     );
+  }
+
+  _futureProjects() async {
+    Database db = await DBManager.getDb();
+    var result = await db.rawQuery("select * from project order by ctime desc");
+    print(result);
+    return result;
   }
 }
 
@@ -112,6 +136,7 @@ class AddProjectState extends State<AddProject> {
               children: [
                 TextFormField(
                   controller: _name,
+                  autofocus: false,
                   decoration: InputDecoration(
                       labelText: '项目名称', prefixIcon: Icon(Icons.near_me)),
                   validator: (value) =>
@@ -150,20 +175,19 @@ class AddProjectState extends State<AddProject> {
                         DBManager.getDb().then((db) {
                           db.rawInsert(
                               'insert into project(name,ctime)values(?,?)',
-                              [name, ctime]);
+                              [name, ctime.second]);
                         }).then((value) {
-                          showDialog(
-                              context: context,
-                              child: AlertDialog(
-                                content: Text('保存成功'),
-                                actions: [
-                                  FlatButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: Text('确定')),
-                                ],
-                              ));
+                          Fluttertoast.showToast(
+                                  msg: "保存成功",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.blue,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0)
+                              .then((value) {
+                            Navigator.of(context).pop();
+                          });
                         });
                       }
                     },

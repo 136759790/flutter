@@ -58,6 +58,9 @@ Future _login() async {
   if (!isLogin) {
     String userInfo = Hive.box(Global.CONFIG).get('user');
     print('object---->$userInfo');
+    if (userInfo == null || userInfo.isEmpty) {
+      return false;
+    }
     User user = User.fromJson(json.decode(userInfo));
     print(user.toString());
     if (user.account == null || user.password == null) {
