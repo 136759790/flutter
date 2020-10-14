@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:myapp/common/global.dart';
@@ -6,9 +7,11 @@ import 'package:myapp/routes/home.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+List<CameraDescription> cameras = [];
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Global.init().then((value) => runApp(MyApp()));
+  cameras = await availableCameras();
 }
 
 class MyApp extends StatelessWidget {
@@ -17,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: UserNotifier()),
+        ChangeNotifierProvider.value(value: ProjectModel()),
       ],
       child: Consumer<UserNotifier>(
         builder: (context, user, child) {

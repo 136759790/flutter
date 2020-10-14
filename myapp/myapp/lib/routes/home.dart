@@ -12,6 +12,7 @@ import 'package:myapp/main/bottomNav.dart';
 import 'package:myapp/main/btnAdd.dart';
 import 'package:myapp/main/drawer.dart';
 import 'package:myapp/main/mainAccount.dart';
+import 'package:myapp/models/project.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:myapp/widgets/switch_project.dart';
@@ -29,16 +30,16 @@ class _HomeRouteState extends State<HomeRoute> {
       future: _login(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          String id = Hive.box(Global.CONFIG).get('project');
+          Project project = Provider.of<ProjectModel>(context).project;
           if (!snapshot.data) {
             return LoginRoute();
-          } else if (id == null || id.isEmpty) {
+          } else if (project == null) {
             return SwitchProject();
           } else {
             return Scaffold(
                 body: AccountMain(),
                 floatingActionButton: BtnAdd(),
-                drawer: MainDrawer(),
+                drawer: DrawerWidget(),
                 bottomNavigationBar: MainBottomNav());
           }
         } else {

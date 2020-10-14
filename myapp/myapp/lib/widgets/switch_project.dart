@@ -2,8 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/common/notifier.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/project.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SwitchProject extends StatefulWidget {
@@ -14,6 +16,13 @@ class SwitchProject extends StatefulWidget {
 }
 
 class SwitchProjectState extends State<SwitchProject> {
+  Future future;
+  @override
+  void initState() {
+    super.initState();
+    future = _futureProjects();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,8 +33,16 @@ class SwitchProjectState extends State<SwitchProject> {
             padding: EdgeInsets.only(right: 30),
             child: GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AddProject()));
+                Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddProject(),
+                            maintainState: false))
+                    .then((value) {
+                  setState(() {
+                    future = _futureProjects();
+                  });
+                });
               },
               child: Icon(Icons.add),
             ),
@@ -33,11 +50,10 @@ class SwitchProjectState extends State<SwitchProject> {
         ],
       ),
       body: FutureBuilder<dynamic>(
-          future: _futureProjects(),
+          future: future,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               List<Map<String, dynamic>> result = snapshot.data;
-              print('object---$result');
               return CustomScrollView(
                 slivers: [
                   SliverSafeArea(
@@ -51,29 +67,65 @@ class SwitchProjectState extends State<SwitchProject> {
                               context: context,
                               child: AlertDialog(
                                 title: Text('提示'),
-                                content: Text('要切换到项目【旋转小火锅吗】?'),
+                                content:
+                                    Text('要切换到项目【${result[index]['name']}】?'),
                                 actions: [
                                   FlatButton(
                                       onPressed: () =>
-                                          Navigator.pop(context, "cancel"),
+                                          Navigator.pop(context, false),
                                       child: Text('取消')),
                                   FlatButton(
                                     onPressed: () =>
-                                        Navigator.pop(context, "cancel"),
+                                        Navigator.pop(context, true),
                                     child: Text('确定'),
                                   ),
                                 ],
-                              ));
+                              )).then((value) {
+                            if (value) {
+                              Provider.of<ProjectModel>(context, listen: false)
+                                  .project = Project.fromJson(result[index]);
+                              Navigator.of(context).pop();
+                            }
+                          });
                         },
                         child: Card(
                           child: Column(
                             children: [
                               ListTile(
                                 leading: Icon(Icons.access_alarm),
-                                trailing: Icon(
-                                  Icons.delete,
-                                  color: Colors.redAccent,
-                                ),
+                                trailing: IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                          context: context,
+                                          child: AlertDialog(
+                                            title: Text('提醒'),
+                                            content: Text(
+                                                '确认要删除项目【${result[index]['name']}】'),
+                                            actions: [
+                                              FlatButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(
+                                                          context, false),
+                                                  child: Text('取消')),
+                                              FlatButton(
+                                                onPressed: () => Navigator.pop(
+                                                    context, true),
+                                                child: Text('确定'),
+                                              ),
+                                            ],
+                                          )).then((value) async {
+                                        if (value) {
+                                          var re = await _deleteProject(
+                                              result[index]['id']);
+                                          print('object$re');
+                                          setState(() {
+                                            future = _futureProjects();
+                                          });
+                                        }
+                                      });
+                                    },
+                                    icon: Icon(Icons.delete),
+                                    color: Colors.red),
                                 title: Text(result[index]['name']),
                               ),
                               Divider(),
@@ -101,7 +153,13 @@ class SwitchProjectState extends State<SwitchProject> {
     );
   }
 
-  _futureProjects() async {
+  Future _deleteProject(int id) async {
+    Database db = await DBManager.getDb();
+    var result = await db.rawDelete("delete from project where id =$id");
+    return result;
+  }
+
+  Future<List<Map<String, dynamic>>> _futureProjects() async {
     Database db = await DBManager.getDb();
     var result = await db.rawQuery("select * from project order by ctime desc");
     print(result);
@@ -175,18 +233,10 @@ class AddProjectState extends State<AddProject> {
                         DBManager.getDb().then((db) {
                           db.rawInsert(
                               'insert into project(name,ctime)values(?,?)',
-                              [name, ctime.second]);
+                              [name, ctime.millisecondsSinceEpoch]);
                         }).then((value) {
-                          Fluttertoast.showToast(
-                                  msg: "保存成功",
-                                  toastLength: Toast.LENGTH_SHORT,
-                                  gravity: ToastGravity.CENTER,
-                                  timeInSecForIosWeb: 1,
-                                  backgroundColor: Colors.blue,
-                                  textColor: Colors.white,
-                                  fontSize: 16.0)
-                              .then((value) {
-                            Navigator.of(context).pop();
+                          Fluttertoast.showToast(msg: "保存成功").then((value) {
+                            Navigator.of(context).pop(true);
                           });
                         });
                       }

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:myapp/common/Global.dart';
+import 'package:myapp/common/global.dart';
+import 'package:myapp/models/project.dart';
 import 'package:myapp/models/user.dart';
 
 class UserNotifier extends ChangeNotifier {
@@ -18,5 +20,17 @@ class UserNotifier extends ChangeNotifier {
   get user {
     var str = Hive.box(Global.CONFIG).get('user');
     return User.fromJson(json.decode(str));
+  }
+}
+
+class ProjectModel extends ChangeNotifier {
+  set project(Project project) {
+    Hive.box(Global.CONFIG).put("project", project.toJson());
+    notifyListeners();
+  }
+
+  get project {
+    var json = Hive.box(Global.CONFIG).get('project');
+    return json != null ? Project.fromJson(new Map.from(json)) : null;
   }
 }

@@ -1,10 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/views/scan/scan.dart';
 import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
-class MainDrawer extends StatelessWidget {
+class DrawerWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => DrawerState();
+}
+
+class DrawerState extends State<DrawerWidget> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     print(Provider.of<UserNotifier>(context).user.toString());
@@ -32,7 +43,9 @@ class MainDrawer extends StatelessWidget {
           ),
           ListTile(
             title: Text('切换项目'),
-            subtitle: Text('旋转小火锅'),
+            subtitle: Text(
+              '${Provider.of<ProjectModel>(context).project.name}',
+            ),
             trailing: Icon(Icons.swap_vertical_circle),
             onTap: () {
               print('switch project');
@@ -43,6 +56,14 @@ class MainDrawer extends StatelessWidget {
             },
           ),
           ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),
+          ListTile(
+            title: Text('文字识别'),
+            trailing: Icon(Icons.crop_free),
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Scanner()));
+            },
+          ),
           ListTile(title: Text('我要发布'), trailing: Icon(Icons.send)),
           Divider(),
           ListTile(

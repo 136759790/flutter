@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_simple_calculator/flutter_simple_calculator.dart';
+import 'package:intl/intl.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/icon.dart';
 
@@ -19,6 +21,8 @@ class AccountAddState extends State<AccountAdd>
   Color _active = Colors.blue;
   int _active_index = -1;
   bool _showNumKey = true;
+  String value = "0";
+
   @override
   void initState() {
     super.initState();
@@ -28,16 +32,11 @@ class AccountAddState extends State<AccountAdd>
           .rawQuery(
               'select i.* from user_icon u left join icon i on u.icon_id = i.id order by id asc;')
           .then((data) {
-        print(data.toString());
         this.setState(() {
           icons = data;
         });
       });
     });
-  }
-
-  Future<List<IconModel>> getIconList() async {
-    return null;
   }
 
   @override
@@ -127,10 +126,55 @@ class AccountAddState extends State<AccountAdd>
           Visibility(
               visible: _showKeyboard,
               child: Expanded(
-                child: _keyboard(),
+                child: SimpleCalculator(
+                  hideSurroundingBorder: true,
+                  hideExpression: true,
+                  // numberFormat: NumberFormat.decimalPattern("zh_CN"),
+                  theme: const CalculatorThemeData(
+                    borderColor: Colors.grey,
+                    borderWidth: 0.1,
+                    displayColor: Colors.white,
+                    displayStyle:
+                        const TextStyle(fontSize: 40, color: Colors.black),
+                    operatorColor: Colors.white,
+                    operatorStyle:
+                        const TextStyle(fontSize: 20, color: Colors.black),
+                    commandColor: Colors.white,
+                    commandStyle:
+                        const TextStyle(fontSize: 20, color: Colors.black),
+                    numColor: Colors.white,
+                    numStyle:
+                        const TextStyle(fontSize: 20, color: Colors.black),
+                  ),
+                ),
                 flex: _showNumKey ? 5 : 1,
               ))
         ]));
+  }
+
+  _fill(String num) {
+    String t = "";
+    if (num == '0') {
+      if (value == "0") {
+        t = "0";
+      }
+    } else if (num == '+' || num == "-") {
+      if (value.endsWith("+") || value.endsWith("-")) {
+        t = value.substring(0, value.length - 1) + num;
+      } else if (value == "0") {
+        t = value;
+      }
+    } else if (num == '.') {}
+
+    if (value == "0") {
+      if (num == "0" || num == '+' || num == "-") {
+        t = "0";
+      }
+    }
+    if ((num == '+' || num == "-") &&
+        (value.endsWith("+") || value.endsWith("-"))) {
+      t = value.substring(0, value.length - 1) + num;
+    }
   }
 
   Column _keyboard() {
@@ -175,7 +219,7 @@ class AccountAddState extends State<AccountAdd>
                   ),
                   Expanded(
                     child: Text(
-                      '0.00',
+                      '$value',
                       style: TextStyle(fontSize: 20),
                     ),
                     flex: 2,

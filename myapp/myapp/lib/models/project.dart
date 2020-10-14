@@ -6,7 +6,7 @@ part 'project.g.dart';
 class Project {
   int id;
   String name;
-  DateTime ctime;
+  int ctime;
   Project();
 
   factory Project.fromJson(Map<String, dynamic> json) =>
