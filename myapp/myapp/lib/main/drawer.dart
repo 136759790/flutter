@@ -34,7 +34,7 @@ class DrawerState extends State<DrawerWidget> {
             ),
             currentAccountPicture: CircleAvatar(
               backgroundImage: NetworkImage(
-                  'https://avatars1.githubusercontent.com/u/18189078?s=400&u=f755a948031cb7e756b661c9f7c0978ed8524b96&v=4'),
+                  'https://pub.flutter-io.cn/static/img/pub-dev-logo-2x.png?hash=umitaheu8hl7gd3mineshk2koqfngugi'),
             ),
             decoration: BoxDecoration(
                 image: DecorationImage(
