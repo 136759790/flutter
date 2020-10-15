@@ -4,6 +4,11 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 var $ = Http();
+var $baidu = new Dio(new BaseOptions(
+    responseType: ResponseType.json,
+    contentType: Headers.formUrlEncodedContentType,
+    connectTimeout: 50000,
+    receiveTimeout: 50000));
 
 class Http {
   var cookieJar = CookieJar();

@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_simple_calculator/flutter_simple_calculator.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/icon.dart';
+import 'package:myapp/widgets/caculator_theme.dart';
 
 class AccountAdd extends StatefulWidget {
   @override
@@ -127,8 +127,8 @@ class AccountAddState extends State<AccountAdd>
               visible: _showKeyboard,
               child: Expanded(
                 child: SimpleCalculator(
-                  hideSurroundingBorder: true,
-                  hideExpression: true,
+                  // hideSurroundingBorder: true,
+                  hideExpression: false,
                   // numberFormat: NumberFormat.decimalPattern("zh_CN"),
                   theme: const CalculatorThemeData(
                     borderColor: Colors.grey,
