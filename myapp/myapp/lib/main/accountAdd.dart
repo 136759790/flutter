@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/common/eventBus.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/icon.dart';
 import 'package:myapp/widgets/caculator_theme.dart';
@@ -142,6 +143,7 @@ class AccountAddState extends State<AccountAdd>
                     if (key == '完成') {
                       await _insertAccount(icons[_active_index]['id'], value,
                           DateTime.now().millisecondsSinceEpoch, "'remark'");
+                      bus.fire(AccountRefreshEvent());
                       Navigator.of(context).pop();
                     }
                   },

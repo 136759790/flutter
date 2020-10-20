@@ -26,6 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   common_utils: ^1.2.1
+  event_bus: ^1.1.1
   # flutter_simple_calculator: ^1.0.4
   input_calculator: ^1.1.0+5
   expressions: ^0.1.5
