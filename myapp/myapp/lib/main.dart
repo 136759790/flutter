@@ -27,6 +27,12 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: '小店',
             home: HomeRoute(),
+            theme: ThemeData(
+              buttonTheme: ButtonThemeData(
+                  minWidth: double.infinity,
+                  height: 50.0,
+                  buttonColor: Colors.blue),
+            ),
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate

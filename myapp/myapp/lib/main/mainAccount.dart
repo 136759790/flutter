@@ -2,6 +2,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
+import 'package:myapp/db/db_manager.dart';
+import 'package:myapp/models/account.dart';
+import 'package:sqflite/sqlite_api.dart';
 
 class AccountMain extends StatefulWidget {
   @override
@@ -9,6 +12,17 @@ class AccountMain extends StatefulWidget {
 }
 
 class AccountMainState extends State<AccountMain> {
+  List<Account> _data = [];
+  void _getData() async {
+    Database db = await DBManager.getDb();
+    db.rawQuery('select * from account order by id desc limit 0,9');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

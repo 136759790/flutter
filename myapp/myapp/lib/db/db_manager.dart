@@ -5,24 +5,33 @@ import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DBManager {
-  static const DBNAME = "zhaoxt";
+  static const DBNAME = "zhaoxt.db";
   static Database _db;
 
   static init() async {
     var dbPath = await getDatabasesPath();
-    String path = dbPath + DBNAME;
-    if (Platform.isIOS) {
-      path = dbPath + "/" + DBNAME;
-    }
+    String path = dbPath + "/" + DBNAME;
     print('db path=$path');
     _db = await openDatabase(
       path,
-      version: 2,
+      version: 1,
       onCreate: (db, version) async {
-        String dataStr = await rootBundle.loadString('assets/data/sql.json');
+        String dataStr = await rootBundle.loadString('assets/data/sql1.json');
         List<dynamic> data = json.decode(dataStr);
         for (var i = 0; i < data.length; i++) {
           await db.execute(data[i].toString());
+        }
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        print(
+            'db===>$db,oldVersion======>$oldVersion,newVersion=====>$newVersion');
+        for (var i = oldVersion + 1; i <= newVersion; i++) {
+          String dataStr =
+              await rootBundle.loadString('assets/data/sql$i.json');
+          List<dynamic> data = json.decode(dataStr);
+          for (var j = 0; j < data.length; j++) {
+            await db.execute(data[j].toString());
+          }
         }
       },
     );

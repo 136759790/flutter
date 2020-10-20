@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/views/scan/scan.dart';
+import 'package:myapp/views/setting/setting.dart';
 import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
@@ -55,7 +56,14 @@ class DrawerState extends State<DrawerWidget> {
                       builder: (context) => new SwitchProject()));
             },
           ),
-          ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),
+          ListTile(
+            title: Text('系统设置'),
+            trailing: Icon(Icons.settings),
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new Setting()));
+            },
+          ),
           ListTile(
             title: Text('文字识别'),
             trailing: Icon(Icons.crop_free),

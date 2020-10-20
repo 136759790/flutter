@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<UserNotifier>(
         builder: (context, user, child) {
           return MaterialApp(
-            title: '小店',
+            title: '元氏卡车',
             home: HomeRoute(),
             localizationsDelegates: [
               GlobalMaterialLocalizations.delegate,

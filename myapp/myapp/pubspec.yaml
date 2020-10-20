@@ -63,7 +63,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/bg_flower.jpg
-    - assets/data/sql.json
+    - assets/data/sql1.json
+    - assets/data/sql2.json
   fonts: 
     - family: IconFonts
       fonts:

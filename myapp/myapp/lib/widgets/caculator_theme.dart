@@ -4,7 +4,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grid_button/flutter_grid_button.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/widgets/caculator.dart';
+import 'package:sqflite/sqflite.dart';
 
 typedef CalcChanged = void Function(
     String key, double value, String expression);
@@ -127,6 +129,12 @@ class CalcController extends ChangeNotifier {
   void toggleSign() {
     _calc.toggleSign();
     notifyListeners();
+  }
+
+  void finish() async {
+    Database db = await DBManager.getDb();
+    // db.rawInsert('insert into ');
+    print(_calc.displayValue);
   }
 }
 
@@ -369,6 +377,9 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
             break;
           case "AC":
             _controller.allClear();
+            break;
+          case "完成":
+            _controller.finish();
             break;
           case "C":
             _controller.clear();
