@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_picker/flutter_picker.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/routes/home.dart';
@@ -34,11 +35,12 @@ class MyApp extends StatelessWidget {
                   buttonColor: Colors.blue),
             ),
             localizationsDelegates: [
+              PickerLocalizationsDelegate.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate
             ],
             supportedLocales: [
-              const Locale('zh', 'CN'),
+              const Locale('zh', 'CH'),
               const Locale('en', 'US'),
             ],
             routes: {

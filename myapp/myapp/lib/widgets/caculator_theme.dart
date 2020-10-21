@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grid_button/flutter_grid_button.dart';
 import 'package:intl/intl.dart' as intl;
+import 'package:myapp/common/eventBus.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/widgets/caculator.dart';
 import 'package:sqflite/sqflite.dart';
@@ -261,6 +262,7 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
   CalcController _controller;
   String _acLabel;
   String _eqLabel;
+  bool _show = true;
 
   final List<String> _nums = List(10);
   final _baseStyle = const TextStyle(
@@ -309,17 +311,31 @@ class _SimpleCalculatorState extends State<SimpleCalculator> {
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
       Expanded(
-        child: _CalcDisplay(
-          hideSurroundingBorder: widget.hideSurroundingBorder,
-          hideExpression: widget.hideExpression,
-          onTappedDisplay: widget.onTappedDisplay,
-          theme: widget.theme,
-          controller: _controller,
+          child: TextField(
+        onTap: () {
+          bus.fire(AccountCalcuEvent(false));
+        },
+        decoration: InputDecoration(
+            prefix: Row(children: [Icon(Icons.note), Text('备注')])),
+      )),
+      Visibility(
+        child: Expanded(
+          child: _CalcDisplay(
+            hideSurroundingBorder: widget.hideSurroundingBorder,
+            hideExpression: widget.hideExpression,
+            onTappedDisplay: widget.onTappedDisplay,
+            theme: widget.theme,
+            controller: _controller,
+          ),
         ),
+        visible: _show,
       ),
-      Expanded(
-        child: _getButtons(),
-        flex: 5,
+      Visibility(
+        child: Expanded(
+          child: _getButtons(),
+          flex: 5,
+        ),
+        visible: _show,
       ),
     ]);
   }

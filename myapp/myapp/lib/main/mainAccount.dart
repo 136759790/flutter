@@ -30,7 +30,7 @@ class AccountMainState extends State<AccountMain> {
     }
   }
 
-  void _initData() async {
+  Future<Null> _initData() async {
     List<Account> result = [];
     Database db = await DBManager.getDb();
     List<Map> data =
@@ -45,6 +45,7 @@ class AccountMainState extends State<AccountMain> {
         });
       }
     }
+    return null;
   }
 
   @override
@@ -70,77 +71,81 @@ class AccountMainState extends State<AccountMain> {
       body: Container(
         child: Column(
           children: [
-            // this._sectionTitle(),
             Expanded(
               child: Row(
                 children: [
                   Expanded(
-                      child: CustomScrollView(
-                    slivers: [
-                      SliverSafeArea(
-                          sliver: SliverPadding(
-                        padding: EdgeInsets.all(8),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.fromLTRB(1, 8, 1, 4),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: Icon(
-                                                IconData(
-                                                    int.parse(_icons[
-                                                        _data[index]
-                                                            .icon_id]['code']),
-                                                    fontFamily: 'IconFonts'),
-                                                color: Colors.blue,
-                                                size: 30,
+                      child: RefreshIndicator(
+                    onRefresh: () => _initData(),
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverSafeArea(
+                            sliver: SliverPadding(
+                          padding: EdgeInsets.all(8),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.fromLTRB(1, 8, 1, 4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Icon(
+                                                  IconData(
+                                                      int.parse(_icons[
+                                                              _data[index]
+                                                                  .icon_id]
+                                                          ['code']),
+                                                      fontFamily: 'IconFonts'),
+                                                  color: Colors.blue,
+                                                  size: 30,
+                                                ),
+                                                flex: 1,
                                               ),
-                                              flex: 1,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                _icons[_data[index].icon_id]
-                                                    ['title'],
-                                                style: TextStyle(
-                                                    color: Colors.blue),
+                                              Expanded(
+                                                child: Text(
+                                                  _icons[_data[index].icon_id]
+                                                      ['title'],
+                                                  style: TextStyle(
+                                                      color: Colors.blue),
+                                                ),
+                                                flex: 2,
                                               ),
-                                              flex: 2,
-                                            ),
-                                            Expanded(
-                                              child: Text(_data[index].remark),
-                                              flex: 5,
-                                            ),
-                                            Expanded(
-                                              child: Text(
-                                                "${_data[index].num}",
-                                                textAlign: TextAlign.end,
+                                              Expanded(
+                                                child:
+                                                    Text(_data[index].remark),
+                                                flex: 5,
                                               ),
-                                              flex: 2,
-                                            ),
-                                          ],
-                                        ),
-                                        Divider(
-                                          thickness: 0.4,
-                                        )
-                                      ],
+                                              Expanded(
+                                                child: Text(
+                                                  "${_data[index].num}",
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                                flex: 2,
+                                              ),
+                                            ],
+                                          ),
+                                          Divider(
+                                            thickness: 0.4,
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }, childCount: _data.length),
-                        ),
-                      ))
-                    ],
+                                  ],
+                                ),
+                              );
+                            }, childCount: _data.length),
+                          ),
+                        ))
+                      ],
+                    ),
                   ))
                 ],
               ),
