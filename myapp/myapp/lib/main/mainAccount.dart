@@ -7,6 +7,7 @@ import 'package:myapp/common/eventBus.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/account.dart';
+import 'package:myapp/models/project.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -19,7 +20,10 @@ class AccountMainState extends State<AccountMain> {
   List<Account> _data = [];
   Map<int, Map> _icons = {};
   NumberFormat nf = NumberFormat('###.##', 'zh_CN');
+  DateTime _date = DateTime(DateTime.now().year, DateTime.now().month);
+
   void _getData() async {
+    print('_getData');
     print(
         'project_id = ${Provider.of<ProjectModel>(context, listen: false).project.id}');
     List<Account> result = [];
@@ -37,12 +41,12 @@ class AccountMainState extends State<AccountMain> {
   }
 
   Future<Null> _initData() async {
-    print(
-        'project_id = ${Provider.of<ProjectModel>(context, listen: false).project.id}2222222222');
+    print('initData');
     List<Account> result = [];
     Database db = await DBManager.getDb();
+    Project p = Provider.of<ProjectModel>(context, listen: false).project;
     List<Map> data = await db.rawQuery(
-        'select * from account where project_id = ${Provider.of<ProjectModel>(context, listen: false).project.id} order by id desc');
+        'select * from account where project_id = ${p.id} order by id desc');
     if (data != null && data.length > 0) {
       for (var item in data) {
         result.add(Account.fromJson(new Map.from(item)));
@@ -59,6 +63,7 @@ class AccountMainState extends State<AccountMain> {
   @override
   void initState() {
     bus.on<AccountRefreshEvent>().listen((event) {
+      print('event----->$event');
       _initData();
     });
     super.initState();
@@ -71,7 +76,7 @@ class AccountMainState extends State<AccountMain> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '小店记账-${Provider.of<ProjectModel>(context).project.name}',
+          '小店记账-${Provider.of<ProjectModel>(context, listen: false).project.name}',
         ),
         centerTitle: true,
         leading: IconButton(
@@ -172,53 +177,95 @@ class AccountMainState extends State<AccountMain> {
   }
 
   Widget _title() {
-    return Expanded(
-        child: Row(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Column(
-            children: [
-              Text('2020年'),
-              Text('2020年'),
-            ],
+          child: GestureDetector(
+            onTap: () {
+              this._chooseDate(context);
+            },
+            child: Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${_date.year}年',
+                    style: TextStyle(fontSize: 10),
+                    textAlign: TextAlign.right,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${_date.month}月',
+                        style: TextStyle(fontSize: 15, height: 1.5),
+                      ),
+                      Icon(Icons.arrow_drop_down)
+                    ],
+                  )
+                ],
+              ),
+            ),
           ),
           flex: 1,
         ),
+        SizedBox(
+          width: 1,
+          height: 30,
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: Colors.grey),
+          ),
+        ),
         Expanded(
-          child: Column(
-            children: [
-              Text(
-                '收入',
-                textAlign: TextAlign.start,
-                style: TextStyle(fontSize: 12, height: 2),
-              ),
-              Text(
-                '19999.26',
-                style: TextStyle(fontSize: 20, height: 1.2),
-              ),
-            ],
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '收入',
+                  style: TextStyle(fontSize: 10, height: 1),
+                ),
+                Text(
+                  '200000',
+                  style: TextStyle(fontSize: 15, height: 1.5),
+                ),
+              ],
+            ),
           ),
           flex: 2,
         ),
         Expanded(
-          child: Column(
-            children: [
-              Text('支出'),
-              Text('2020年'),
-            ],
+          child: Container(
+            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '支出',
+                  style: TextStyle(fontSize: 10, height: 1),
+                ),
+                Text(
+                  '200000',
+                  style: TextStyle(fontSize: 15, height: 1.5),
+                ),
+              ],
+            ),
           ),
           flex: 2,
         ),
       ],
-    ));
+    );
   }
 
   void _chooseDate(BuildContext context) async {
     Picker(
+        title: Text('请选择时间'),
         adapter: DateTimePickerAdapter(
             isNumberMonth: true,
-            yearBegin: 2015,
-            yearEnd: 2021,
+            yearBegin: 1990,
+            yearEnd: 2100,
             yearSuffix: '年',
             monthSuffix: '月',
             customColumnType: [0, 1]),
@@ -229,7 +276,12 @@ class AccountMainState extends State<AccountMain> {
         cancelText: '取消',
         columnPadding: const EdgeInsets.all(8.0),
         onConfirm: (Picker picker, List value) {
+          DateTime date = DateTime(1990 + value[0], value[1] + 1);
+          setState(() {
+            _date = date;
+          });
           print(value.toString());
+          print(date.toString());
           print(picker.getSelectedValues());
         }).showDialog(context);
   }

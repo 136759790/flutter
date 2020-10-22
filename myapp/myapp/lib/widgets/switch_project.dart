@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:myapp/common/eventBus.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/project.dart';
@@ -75,8 +76,10 @@ class SwitchProjectState extends State<SwitchProject> {
                                           Navigator.pop(context, false),
                                       child: Text('取消')),
                                   FlatButton(
-                                    onPressed: () =>
-                                        Navigator.pop(context, true),
+                                    onPressed: () {
+                                      bus.fire(AccountRefreshEvent());
+                                      Navigator.pop(context, true);
+                                    },
                                     child: Text('确定'),
                                   ),
                                 ],
