@@ -3,12 +3,12 @@ import 'package:expressions/expressions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_grid_button/flutter_grid_button.dart';
-import 'package:flutter_picker/flutter_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:myapp/common/eventBus.dart';
+import 'package:myapp/common/notifier.dart';
 import 'package:myapp/db/db_manager.dart';
+import 'package:myapp/models/account.dart';
 import 'package:myapp/models/icon.dart';
-import 'package:myapp/widgets/caculator_theme.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountAdd extends StatefulWidget {
@@ -21,6 +21,7 @@ class AccountAdd extends StatefulWidget {
 class AccountAddState extends State<AccountAdd>
     with SingleTickerProviderStateMixin {
   TabController tabController;
+  TextEditingController _remarkController = TextEditingController();
   List<Map> icons = new List();
   bool _showKeyboard = false;
   Color _inactive = Colors.black12;
@@ -31,6 +32,7 @@ class AccountAddState extends State<AccountAdd>
   String _numValue = "";
   String _labelDone = "完成";
   String _labelTime = "今天";
+  DateTime _date = DateTime.now();
   final ex = ExpressionEvaluator();
   @override
   void initState() {
@@ -52,12 +54,6 @@ class AccountAddState extends State<AccountAdd>
         });
       });
     });
-  }
-
-  void _insertAccount(int icon_id, double num, int ctime, String remark) async {
-    Database db = await DBManager.getDb();
-    await db.rawInsert(
-        'insert into account(ctime,icon_id,remark,num)values($ctime,$icon_id,$remark,$num)');
   }
 
   @override
@@ -165,9 +161,8 @@ class AccountAddState extends State<AccountAdd>
           ),
           Expanded(
             child: TextField(
+              controller: _remarkController,
               decoration: InputDecoration(border: InputBorder.none),
-              keyboardType:
-                  TextInputType.numberWithOptions(decimal: true, signed: true),
               onTap: () {
                 setState(() {
                   _showNumKey = false;
@@ -207,6 +202,7 @@ class AccountAddState extends State<AccountAdd>
   }
 
   _numCmd(var value, var context) {
+    print(value);
     if ("123456789.".contains(value)) {
       setState(() {
         _numValue = _numValue + value;
@@ -231,7 +227,7 @@ class AccountAddState extends State<AccountAdd>
       setState(() {
         _numValue = _numValue.substring(0, _numValue.length - 1);
       });
-    } else if ("今天" == value) {
+    } else if ("time" == value) {
       showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -241,10 +237,28 @@ class AccountAddState extends State<AccountAdd>
       ).then((value) {
         String date = DateUtil.formatDate(value, format: 'yyyy/MM/dd');
         setState(() {
+          _date = value;
           _labelTime = date;
         });
       });
+    } else if ('完成' == value) {
+      Account acc = Account();
+      acc.icon_id = icons[_active_index]['id'];
+      acc.value = num.parse(_numValue);
+      acc.remark = _remarkController.text;
+      acc.ctime = _date.millisecondsSinceEpoch;
+      acc.project_id =
+          Provider.of<ProjectModel>(context, listen: false).project.id;
+      _insertAccount(acc);
+      bus.fire(AccountRefreshEvent());
+      Navigator.of(context).pop();
     }
+  }
+
+  void _insertAccount(Account account) async {
+    Database db = await DBManager.getDb();
+    await db.rawInsert(
+        "insert into account(ctime,icon_id,remark,value,project_id)values(${account.ctime},${account.icon_id},'${account.remark}',${account.value},${account.project_id})");
   }
 
   List<List<GridButtonItem>> _getItems() {
@@ -256,7 +270,7 @@ class AccountAddState extends State<AccountAdd>
         GridButtonItem(
             color: Colors.lightBlue,
             title: _labelTime,
-            value: _labelTime,
+            value: 'time',
             textStyle: TextStyle(fontSize: 12)),
       ],
       [

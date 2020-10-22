@@ -8,7 +8,8 @@ class Account {
   int ctime;
   int icon_id;
   String remark;
-  double num;
+  num value;
+  int project_id;
   Account();
 
   factory Account.fromJson(Map<String, dynamic> json) =>
