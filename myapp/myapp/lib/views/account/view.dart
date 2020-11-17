@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class AccountView extends StatefulWidget {
-  AccountView({Key key}) : super(key: key);
+  AccountView({Key key, this.account}) : super(key: key);
   var account;
 
   @override
@@ -10,7 +11,6 @@ class AccountView extends StatefulWidget {
 }
 
 class _AccountViewState extends State<AccountView> {
-  GlobalKey<FormState> _formKey = new GlobalKey();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +23,8 @@ class _AccountViewState extends State<AccountView> {
   }
 
   Widget _body() {
+    print("666666666${widget.account}");
+    DateFormat df = DateFormat('yyyy-MM-dd');
     return Stack(children: [
       Padding(
         padding: const EdgeInsets.fromLTRB(30, 10, 20, 10),
@@ -63,7 +65,7 @@ class _AccountViewState extends State<AccountView> {
                   ),
                   Expanded(
                     child: Text(
-                      '收入',
+                      '${widget.account.value}',
                       style: _valueTextStyle(),
                     ),
                     flex: 4,
@@ -85,7 +87,7 @@ class _AccountViewState extends State<AccountView> {
                   ),
                   Expanded(
                     child: Text(
-                      '收入',
+                      '${df.format(DateTime.fromMillisecondsSinceEpoch(widget.account.ctime))}',
                       style: _valueTextStyle(),
                     ),
                     flex: 4,
@@ -107,7 +109,7 @@ class _AccountViewState extends State<AccountView> {
                   ),
                   Expanded(
                     child: Text(
-                      '收入',
+                      '${widget.account.remark}',
                       style: _valueTextStyle(),
                     ),
                     flex: 4,

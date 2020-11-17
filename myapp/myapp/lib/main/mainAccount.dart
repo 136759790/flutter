@@ -217,8 +217,8 @@ class AccountMainState extends State<AccountMain> {
     } else {
       return GestureDetector(
         onTap: () {
-          Navigator.of(context).push(
-              new MaterialPageRoute(builder: (context) => new AccountView()));
+          Navigator.of(context).push(new MaterialPageRoute(
+              builder: (context) => new AccountView(account: item)));
         },
         child: Row(
           children: [
