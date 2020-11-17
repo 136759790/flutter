@@ -1,4 +1,3 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_picker/flutter_picker.dart';
@@ -7,7 +6,9 @@ import 'package:myapp/common/eventBus.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/db/db_manager.dart';
 import 'package:myapp/models/account.dart';
+import 'package:myapp/models/accountGroup.dart';
 import 'package:myapp/models/project.dart';
+import 'package:myapp/views/account/view.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -17,40 +18,42 @@ class AccountMain extends StatefulWidget {
 }
 
 class AccountMainState extends State<AccountMain> {
-  List<Account> _data = [];
+  List _data = [];
   Map<int, Map> _icons = {};
   NumberFormat nf = NumberFormat('###.##', 'zh_CN');
   DateTime _date = DateTime(DateTime.now().year, DateTime.now().month);
 
-  void _getData() async {
-    print('_getData');
-    print(
-        'project_id = ${Provider.of<ProjectModel>(context, listen: false).project.id}');
-    List<Account> result = [];
-    Database db = await DBManager.getDb();
-    List<Map> data = await db.rawQuery(
-        'select * from account where project_id = ${Provider.of<ProjectModel>(context, listen: false).project.id} order by id desc');
-    if (data != null && data.length > 0) {
-      for (var item in data) {
-        result.add(Account.fromJson(new Map.from(item)));
-      }
-      setState(() {
-        _data.addAll(result);
-      });
-    }
-  }
-
   Future<Null> _initData() async {
     print('initData');
-    List<Account> result = [];
+    List result = [];
     Database db = await DBManager.getDb();
     Project p = Provider.of<ProjectModel>(context, listen: false).project;
     List<Map> data = await db.rawQuery(
         'select * from account where project_id = ${p.id} order by id desc');
+    Map<String, AccountGroup> map = {};
     if (data != null && data.length > 0) {
       for (var item in data) {
-        result.add(Account.fromJson(new Map.from(item)));
+        Account acc = Account.fromJson(new Map.from(item));
+        int ctime = acc.ctime;
+        DateTime cdate = DateTime.fromMillisecondsSinceEpoch(ctime);
+        String sdate = DateFormat('yyyy-MM-dd').format(cdate);
+        AccountGroup ag = null;
+        if (!map.containsKey(sdate)) {
+          ag = AccountGroup.init(sdate, cdate.weekday);
+          map[sdate] = ag;
+          result.add(ag);
+        } else {
+          ag = map[sdate];
+        }
+        if (acc.value > 0) {
+          ag.expense = ag.expense + acc.value;
+        } else {
+          ag.income = ag.income + acc.value;
+        }
+        result.add(acc);
       }
+      print("-------------------------------------------");
+      print(result);
       if (mounted) {
         setState(() {
           _data = result;
@@ -63,11 +66,10 @@ class AccountMainState extends State<AccountMain> {
   @override
   void initState() {
     bus.on<AccountRefreshEvent>().listen((event) {
-      print('event----->$event');
       _initData();
     });
     super.initState();
-    _getData();
+    _initData();
     _getIcons();
   }
 
@@ -97,75 +99,7 @@ class AccountMainState extends State<AccountMain> {
                   Expanded(
                       child: RefreshIndicator(
                     onRefresh: () => _initData(),
-                    child: CustomScrollView(
-                      slivers: [
-                        SliverSafeArea(
-                            sliver: SliverPadding(
-                          padding: EdgeInsets.all(8),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                                (BuildContext context, int index) {
-                              return Padding(
-                                padding: const EdgeInsets.fromLTRB(1, 8, 1, 4),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Icon(
-                                                  IconData(
-                                                      int.parse(_icons[
-                                                              _data[index]
-                                                                  .icon_id]
-                                                          ['code']),
-                                                      fontFamily: 'IconFonts'),
-                                                  color: Colors.blue,
-                                                  size: 30,
-                                                ),
-                                                flex: 1,
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  _icons[_data[index].icon_id]
-                                                      ['title'],
-                                                  style: TextStyle(
-                                                      color: Colors.blue),
-                                                ),
-                                                flex: 2,
-                                              ),
-                                              Expanded(
-                                                child:
-                                                    Text(_data[index].remark),
-                                                flex: 5,
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  "${nf.format(_data[index].value)}",
-                                                  textAlign: TextAlign.end,
-                                                ),
-                                                flex: 2,
-                                              ),
-                                            ],
-                                          ),
-                                          Divider(
-                                            thickness: 0.4,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }, childCount: _data.length),
-                          ),
-                        ))
-                      ],
-                    ),
+                    child: _content(_data),
                   ))
                 ],
               ),
@@ -173,6 +107,16 @@ class AccountMainState extends State<AccountMain> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _jine(var item) {
+    var v = item.value;
+    v = v * -1;
+    return Text(
+      "${nf.format(v)}",
+      textAlign: TextAlign.end,
+      style: TextStyle(color: v > 0 ? Colors.red : Colors.green),
     );
   }
 
@@ -208,7 +152,7 @@ class AccountMainState extends State<AccountMain> {
               ),
             ),
           ),
-          flex: 1,
+          flex: 2,
         ),
         SizedBox(
           width: 1,
@@ -234,7 +178,7 @@ class AccountMainState extends State<AccountMain> {
               ],
             ),
           ),
-          flex: 2,
+          flex: 3,
         ),
         Expanded(
           child: Container(
@@ -253,11 +197,159 @@ class AccountMainState extends State<AccountMain> {
               ],
             ),
           ),
-          flex: 2,
+          flex: 3,
         ),
       ],
     );
   }
+
+  Widget _accountItem(var item) {
+    bool isAccount = item is Account;
+    if (!isAccount) {
+      return Row(
+        children: [
+          Expanded(child: Text(item.date)),
+          Expanded(child: Text(item.week)),
+          Expanded(child: Text('支出${item.expense.abs()}')),
+          Expanded(child: Text('收入${item.income.abs()}')),
+        ],
+      );
+    } else {
+      return GestureDetector(
+        onTap: () {
+          Navigator.of(context).push(
+              new MaterialPageRoute(builder: (context) => new AccountView()));
+        },
+        child: Row(
+          children: [
+            Expanded(
+              child: Icon(
+                IconData(int.parse(_icons[item.icon_id]['code']),
+                    fontFamily: 'IconFonts'),
+                color: Colors.blue,
+                size: 30,
+              ),
+              flex: 1,
+            ),
+            Expanded(
+              child: Text(
+                _icons[item.icon_id]['title'],
+                style: TextStyle(color: Colors.blue),
+              ),
+              flex: 2,
+            ),
+            Expanded(
+              child: Text(item.remark),
+              flex: 5,
+            ),
+            Expanded(
+              child: _jine(item),
+              flex: 2,
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  Widget _content(_data) {
+    return CustomScrollView(
+      slivers: [
+        SliverSafeArea(
+            sliver: SliverPadding(
+          padding: EdgeInsets.all(8),
+          sliver: SliverList(
+            delegate:
+                SliverChildBuilderDelegate((BuildContext context, int index) {
+              var item = _data[index];
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(1, 8, 1, 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          _accountItem(item),
+                          Divider(
+                            thickness: 0.4,
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }, childCount: _data.length),
+          ),
+        ))
+      ],
+    );
+  }
+  // Widget _content(_data) {
+  //   return CustomScrollView(
+  //     slivers: [
+  //       SliverSafeArea(
+  //           sliver: SliverPadding(
+  //         padding: EdgeInsets.all(8),
+  //         sliver: SliverList(
+  //           delegate:
+  //               SliverChildBuilderDelegate((BuildContext context, int index) {
+  //             return Padding(
+  //               padding: const EdgeInsets.fromLTRB(1, 8, 1, 4),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Expanded(
+  //                     child: Column(
+  //                       children: [
+  //                         Row(
+  //                           children: [
+  //                             Expanded(
+  //                               child: Icon(
+  //                                 IconData(
+  //                                     int.parse(
+  //                                         _icons[_data[index].icon_id]['code']),
+  //                                     fontFamily: 'IconFonts'),
+  //                                 color: Colors.blue,
+  //                                 size: 30,
+  //                               ),
+  //                               flex: 1,
+  //                             ),
+  //                             Expanded(
+  //                               child: Text(
+  //                                 _icons[_data[index].icon_id]['title'],
+  //                                 style: TextStyle(color: Colors.blue),
+  //                               ),
+  //                               flex: 2,
+  //                             ),
+  //                             Expanded(
+  //                               child: Text(_data[index].remark),
+  //                               flex: 5,
+  //                             ),
+  //                             Expanded(
+  //                               child: _jine(_data, index),
+  //                               flex: 2,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                         Divider(
+  //                           thickness: 0.4,
+  //                         )
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             );
+  //           }, childCount: _data.length),
+  //         ),
+  //       ))
+  //     ],
+  //   );
+  // }
 
   void _chooseDate(BuildContext context) async {
     Picker(

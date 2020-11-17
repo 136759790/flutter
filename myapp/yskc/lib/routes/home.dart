@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -11,11 +10,10 @@ import 'package:yskc/common/result.dart';
 import 'package:yskc/main/bottomNav.dart';
 import 'package:yskc/main/btnAdd.dart';
 import 'package:yskc/main/drawer.dart';
-import 'package:yskc/main/mainAccount.dart';
 import 'package:yskc/models/project.dart';
 import 'package:yskc/models/user.dart';
 import 'package:yskc/routes/login.dart';
-import 'package:yskc/widgets/switch_project.dart';
+import 'package:yskc/views/truck/truck.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -30,14 +28,11 @@ class _HomeRouteState extends State<HomeRoute> {
       future: _login(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          Project project = Provider.of<ProjectModel>(context).project;
           if (!snapshot.data) {
             return LoginRoute();
-          } else if (project == null) {
-            return SwitchProject();
           } else {
             return Scaffold(
-                body: AccountMain(),
+                body: TruckList(),
                 floatingActionButton: BtnAdd(),
                 drawer: DrawerWidget(),
                 bottomNavigationBar: MainBottomNav());

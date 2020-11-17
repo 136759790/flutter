@@ -203,7 +203,7 @@ class AccountAddState extends State<AccountAdd>
 
   _numCmd(var value, var context) {
     print(value);
-    if ("123456789.".contains(value)) {
+    if ("1234567890.".contains(value)) {
       setState(() {
         _numValue = _numValue + value;
       });
@@ -235,15 +235,27 @@ class AccountAddState extends State<AccountAdd>
         lastDate: DateTime(2050),
         locale: Locale('zh'),
       ).then((value) {
-        String date = DateUtil.formatDate(value, format: 'yyyy/MM/dd');
-        setState(() {
-          _date = value;
-          _labelTime = date;
-        });
+        if (value != null) {
+          String date = DateUtil.formatDate(value, format: 'yyyy/MM/dd');
+          String today =
+              DateUtil.formatDate(DateTime.now(), format: 'yyyy/MM/dd');
+          if (date != today) {
+            setState(() {
+              _date = value;
+              _labelTime = date;
+            });
+          } else {
+            setState(() {
+              _date = value;
+              _labelTime = '今天';
+            });
+          }
+        }
       });
     } else if ('完成' == value) {
       Account acc = Account();
       acc.icon_id = icons[_active_index]['id'];
+      print('num_value----$_numValue');
       acc.value = num.parse(_numValue);
       acc.remark = _remarkController.text;
       acc.ctime = _date.millisecondsSinceEpoch;
@@ -271,7 +283,7 @@ class AccountAddState extends State<AccountAdd>
             color: Colors.lightBlue,
             title: _labelTime,
             value: 'time',
-            textStyle: TextStyle(fontSize: 12)),
+            textStyle: TextStyle(fontSize: 10)),
       ],
       [
         GridButtonItem(title: '4'),

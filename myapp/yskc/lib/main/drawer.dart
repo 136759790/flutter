@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yskc/common/notifier.dart';
 import 'package:yskc/views/scan/scan.dart';
-import 'package:yskc/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -52,7 +51,7 @@ class DrawerState extends State<DrawerWidget> {
               Navigator.push(
                   context,
                   new MaterialPageRoute(
-                      builder: (context) => new SwitchProject()));
+                      builder: (context) => new Text("data")));
             },
           ),
           ListTile(title: Text('系统设置'), trailing: Icon(Icons.settings)),

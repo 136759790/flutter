@@ -12,7 +12,8 @@ Account _$AccountFromJson(Map<String, dynamic> json) {
     ..ctime = json['ctime'] as int
     ..icon_id = json['icon_id'] as int
     ..remark = json['remark'] as String
-    ..value = json['value'] as num;
+    ..value = json['value'] as num
+    ..project_id = json['project_id'] as int;
 }
 
 Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
@@ -21,4 +22,5 @@ Map<String, dynamic> _$AccountToJson(Account instance) => <String, dynamic>{
       'icon_id': instance.icon_id,
       'remark': instance.remark,
       'value': instance.value,
+      'project_id': instance.project_id,
     };

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:yskc/db/db_manager.dart';
 import 'package:yskc/models/icon.dart';
-import 'package:yskc/widgets/caculator_theme.dart';
 
 class AccountAdd extends StatefulWidget {
   @override
@@ -126,55 +125,10 @@ class AccountAddState extends State<AccountAdd>
           Visibility(
               visible: _showKeyboard,
               child: Expanded(
-                child: SimpleCalculator(
-                  // hideSurroundingBorder: true,
-                  hideExpression: false,
-                  // numberFormat: NumberFormat.decimalPattern("zh_CN"),
-                  theme: const CalculatorThemeData(
-                    borderColor: Colors.grey,
-                    borderWidth: 0.1,
-                    displayColor: Colors.white,
-                    displayStyle:
-                        const TextStyle(fontSize: 40, color: Colors.black),
-                    operatorColor: Colors.white,
-                    operatorStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black),
-                    commandColor: Colors.white,
-                    commandStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black),
-                    numColor: Colors.white,
-                    numStyle:
-                        const TextStyle(fontSize: 20, color: Colors.black),
-                  ),
-                ),
+                child: Text('data'),
                 flex: _showNumKey ? 5 : 1,
               ))
         ]));
-  }
-
-  _fill(String num) {
-    String t = "";
-    if (num == '0') {
-      if (value == "0") {
-        t = "0";
-      }
-    } else if (num == '+' || num == "-") {
-      if (value.endsWith("+") || value.endsWith("-")) {
-        t = value.substring(0, value.length - 1) + num;
-      } else if (value == "0") {
-        t = value;
-      }
-    } else if (num == '.') {}
-
-    if (value == "0") {
-      if (num == "0" || num == '+' || num == "-") {
-        t = "0";
-      }
-    }
-    if ((num == '+' || num == "-") &&
-        (value.endsWith("+") || value.endsWith("-"))) {
-      t = value.substring(0, value.length - 1) + num;
-    }
   }
 
   Column _keyboard() {

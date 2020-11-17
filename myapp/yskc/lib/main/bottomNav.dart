@@ -14,10 +14,9 @@ class MainBottomNavState extends State<MainBottomNav> {
     return BottomNavigationBar(
       currentIndex: this.currentIndex,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('首页')),
-        BottomNavigationBarItem(icon: Icon(Icons.book), title: Text('小说')),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.music_note), title: Text('音乐')),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: '车源'),
+        BottomNavigationBarItem(icon: Icon(Icons.book), label: '求购'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
       ],
       onTap: (int index) {
         setState(() {
