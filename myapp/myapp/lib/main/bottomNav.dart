@@ -9,15 +9,15 @@ class MainBottomNav extends StatefulWidget {
 
 class MainBottomNavState extends State<MainBottomNav> {
   int currentIndex = 0;
+  StatefulWidget _currentPage;
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: this.currentIndex,
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('首页')),
-        BottomNavigationBarItem(icon: Icon(Icons.book), title: Text('小说')),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.music_note), title: Text('音乐')),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: '首页'),
+        BottomNavigationBarItem(icon: Icon(Icons.book), label: '店铺'),
+        BottomNavigationBarItem(icon: Icon(Icons.music_note), label: '音乐'),
       ],
       onTap: (int index) {
         setState(() {

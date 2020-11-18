@@ -15,6 +15,7 @@ import 'package:myapp/main/mainAccount.dart';
 import 'package:myapp/models/project.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/login.dart';
+import 'package:myapp/views/hair/shop.dart';
 import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +25,23 @@ class HomeRoute extends StatefulWidget {
 }
 
 class _HomeRouteState extends State<HomeRoute> {
+  int _currentIndex = 0;
+  StatefulWidget _currentPage = AccountMain();
+  _onTap(int index) {
+    switch (index) {
+      case 0:
+        _currentPage = AccountMain();
+        ;
+        break;
+      case 1:
+        _currentPage = HairShop();
+        break;
+    }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -37,10 +55,21 @@ class _HomeRouteState extends State<HomeRoute> {
             return SwitchProject();
           } else {
             return Scaffold(
-                body: AccountMain(),
+                body: _currentPage,
                 floatingActionButton: BtnAdd(),
                 drawer: DrawerWidget(),
-                bottomNavigationBar: MainBottomNav());
+                bottomNavigationBar: BottomNavigationBar(
+                  currentIndex: this._currentIndex,
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.home), label: '首页'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.book), label: '店铺'),
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.music_note), label: '音乐'),
+                  ],
+                  onTap: _onTap,
+                ));
           }
         } else {
           return Center(
