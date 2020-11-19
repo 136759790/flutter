@@ -62,11 +62,11 @@ class _HomeRouteState extends State<HomeRoute> {
                   currentIndex: this._currentIndex,
                   items: [
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.home), label: '首页'),
+                        icon: Icon(Icons.home), title: Text('首页')),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.book), label: '店铺'),
+                        icon: Icon(Icons.book), title: Text('会员卡')),
                     BottomNavigationBarItem(
-                        icon: Icon(Icons.music_note), label: '音乐'),
+                        icon: Icon(Icons.music_note), title: Text('理发')),
                   ],
                   onTap: _onTap,
                 ));
