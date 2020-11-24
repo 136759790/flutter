@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserNotifier()),
         ChangeNotifierProvider(create: (context) => ProjectModel()),
+        ChangeNotifierProvider(create: (context) => ShopModel()),
       ],
       child: Consumer<UserNotifier>(
         builder: (context, user, child) {

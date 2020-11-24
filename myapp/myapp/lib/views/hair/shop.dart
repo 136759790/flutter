@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
@@ -17,9 +19,14 @@ class _HairShopState extends State<HairShop> {
   void initState() {
     super.initState();
     HairApi.getShops({}).then((value) {
-      if (value != null) {
+      print('value------${value['list']}');
+      if (value != null && value['list'].length > 0) {
+        List shops = [];
+        for (var item in value['list']) {
+          shops.add(new Map.from(item));
+        }
         setState(() {
-          _shops = value;
+          _shops = shops;
         });
       }
     });

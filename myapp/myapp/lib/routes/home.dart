@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -8,11 +7,11 @@ import 'package:myapp/api/user.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/result.dart';
-import 'package:myapp/main/bottomNav.dart';
 import 'package:myapp/main/btnAdd.dart';
 import 'package:myapp/main/drawer.dart';
 import 'package:myapp/main/mainAccount.dart';
 import 'package:myapp/models/project.dart';
+import 'package:myapp/models/shop.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:myapp/views/hair/shop.dart';
@@ -31,7 +30,6 @@ class _HomeRouteState extends State<HomeRoute> {
     switch (index) {
       case 0:
         _currentPage = AccountMain();
-        ;
         break;
       case 1:
         _currentPage = HairShop();
@@ -40,6 +38,13 @@ class _HomeRouteState extends State<HomeRoute> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    User user = Provider.of<UserNotifier>(context).user;
+    Shop shop = Provider.of<ShopModel>(context).shop;
   }
 
   @override

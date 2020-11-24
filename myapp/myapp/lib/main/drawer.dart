@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/scan/scan.dart';
 import 'package:myapp/views/setting/setting.dart';
 import 'package:myapp/widgets/switch_project.dart';
@@ -54,6 +55,17 @@ class DrawerState extends State<DrawerWidget> {
                   context,
                   new MaterialPageRoute(
                       builder: (context) => new SwitchProject()));
+            },
+          ),
+          ListTile(
+            title: Text('店铺'),
+            subtitle: Text(
+              '${Provider.of<ShopModel>(context).shop.name}',
+            ),
+            trailing: Icon(Icons.swap_vertical_circle),
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new ShopList()));
             },
           ),
           ListTile(

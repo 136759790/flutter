@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/models/project.dart';
+import 'package:myapp/models/shop.dart';
 import 'package:myapp/models/user.dart';
 
 class UserNotifier extends ChangeNotifier {
@@ -20,6 +21,17 @@ class UserNotifier extends ChangeNotifier {
   get user {
     var str = Hive.box(Global.CONFIG).get('user');
     return User.fromJson(json.decode(str));
+  }
+}
+
+class ShopModel extends ChangeNotifier {
+  set shop(Shop shop) {
+    Hive.box(Global.CONFIG).put("shop", shop.toJson());
+  }
+
+  get shop {
+    var json = Hive.box(Global.CONFIG).get('shop');
+    return json != null ? Shop.fromJson(new Map.from(json)) : null;
   }
 }
 
