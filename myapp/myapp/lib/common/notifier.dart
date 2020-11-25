@@ -27,6 +27,7 @@ class UserNotifier extends ChangeNotifier {
 class ShopModel extends ChangeNotifier {
   set shop(Shop shop) {
     Hive.box(Global.CONFIG).put("shop", shop.toJson());
+    notifyListeners();
   }
 
   get shop {

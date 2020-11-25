@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'account.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(nullable: false)
 class Account {
   int id;
   int ctime;

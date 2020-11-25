@@ -6,6 +6,7 @@ class BtnAdd extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: "addAccount",
       onPressed: () {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => new AccountAdd()));

@@ -6,7 +6,8 @@ part 'shop.g.dart';
 class Shop {
   int id;
   String name;
-  DateTime ctime;
+  int ctime;
+  int creator;
   Shop();
 
   factory Shop.fromJson(Map<String, dynamic> json) => _$ShopFromJson(json);

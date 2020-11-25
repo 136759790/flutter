@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/shop_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
 
@@ -14,71 +15,31 @@ class HairShop extends StatefulWidget {
 }
 
 class _HairShopState extends State<HairShop> {
-  List _shops = [];
-  @override
-  void initState() {
-    super.initState();
-    HairApi.getShops({}).then((value) {
-      print('value------${value['list']}');
-      if (value != null && value['list'].length > 0) {
-        List shops = [];
-        for (var item in value['list']) {
-          shops.add(new Map.from(item));
-        }
-        setState(() {
-          _shops = shops;
-        });
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (_shops.length == 0) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('添加店铺'),
-          centerTitle: true,
-        ),
-        body: Center(
-            child: Padding(
-          padding: const EdgeInsets.all(44.0),
-          child: FlatButton.icon(
-              color: Colors.blue,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text('商铺'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.search),
               onPressed: () {
-                Navigator.of(context).push(
-                    new MaterialPageRoute(builder: (context) => ShopEdit()));
-              },
-              icon: Icon(
-                Icons.add,
-                color: Colors.white,
-              ),
-              label: Text(
-                '添加店铺',
-                style: TextStyle(color: Colors.white),
-              )),
-        )),
-      );
-    } else {
-      return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text('商铺'),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(context: context, delegate: SearchBarShop());
-                })
-          ],
-        ),
-        body: _body(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          heroTag: "addCard",
-        ),
-      );
-    }
+                showSearch(context: context, delegate: SearchBarShop());
+              })
+        ],
+      ),
+      body: _body(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => ShopCard()));
+        },
+        heroTag: "addCard",
+      ),
+    );
   }
 
   Widget _body() {

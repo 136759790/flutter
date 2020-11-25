@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/shop.dart';
+import 'package:provider/provider.dart';
 
 class ShopEdit extends StatefulWidget {
-  ShopEdit({Key key}) : super(key: key);
-
+  int id;
+  ShopEdit({this.id});
   @override
   _ShopEditState createState() => _ShopEditState();
 }
 
 class _ShopEditState extends State<ShopEdit> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.id != null) {
+      HairApi.getShop(widget.id).then((shop) {
+        this._name.text = shop.name;
+        this._ctime.text = DateFormat("yyyy-MM-dd HH:mm:ss")
+            .format(DateTime.fromMillisecondsSinceEpoch(shop.ctime * 1000));
+      });
+    }
+  }
+
   TextEditingController _name = TextEditingController();
   TextEditingController _ctime = TextEditingController(
       text: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()));
@@ -80,7 +95,8 @@ class _ShopEditState extends State<ShopEdit> {
                   DateTime ctime =
                       DateFormat('yyyy-MM-dd HH:mm:ss').parse(_ctime.text);
                   String name = _name.text;
-                  _saveShop(name, ctime.millisecondsSinceEpoch / 1000);
+                  _saveShop(name, (ctime.millisecondsSinceEpoch / 1000).floor(),
+                      widget.id);
                 }
               },
               child: Text(
@@ -93,9 +109,15 @@ class _ShopEditState extends State<ShopEdit> {
         ]));
   }
 
-  void _saveShop(var name, var ctime) {
-    HairApi.saveShop({'name': name, 'ctime': ctime}).then((value) {
-      Navigator.of(context).pop();
+  void _saveShop(var name, var ctime, var id) {
+    HairApi.saveShop({'name': name, 'ctime': ctime, 'id': id}).then((value) {
+      Shop shop = Provider.of<ShopModel>(context, listen: false).shop;
+      if (shop.id == widget.id) {
+        shop.name = name;
+        shop.ctime = int.parse(ctime.toString());
+        Provider.of<ShopModel>(context, listen: false).shop = shop;
+      }
+      Navigator.of(context).pop(true);
     });
   }
 }

@@ -56,7 +56,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     if ((_formKey.currentState as FormState).validate()) {
                       UserApi.login(_uname.text, _pwd.text).then((data) {
                         if (data.status == 1) {
-                          var map = data.data;
+                          Map<String, dynamic> map = new Map.from(data.data);
                           map['password'] = _pwd.text;
                           map['account'] = _uname.text;
                           print('map=>$map');
