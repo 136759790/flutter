@@ -1,10 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:myapp/api/hair.dart';
 import 'package:myapp/views/hair/card_edit.dart';
-import 'package:myapp/views/hair/shop_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
 
 class HairShop extends StatefulWidget {

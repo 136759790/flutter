@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/views/hair/set_list.dart';
 import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/scan/scan.dart';
 import 'package:myapp/views/setting/setting.dart';
@@ -66,6 +67,14 @@ class DrawerState extends State<DrawerWidget> {
             onTap: () {
               Navigator.push(context,
                   new MaterialPageRoute(builder: (context) => new ShopList()));
+            },
+          ),
+          ListTile(
+            title: Text('套餐管理'),
+            trailing: Icon(Icons.folder),
+            onTap: () {
+              Navigator.push(context,
+                  new MaterialPageRoute(builder: (context) => new SetList()));
             },
           ),
           ListTile(
