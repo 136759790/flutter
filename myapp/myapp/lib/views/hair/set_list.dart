@@ -25,6 +25,14 @@ class _SetListState extends State<SetList> {
       appBar: AppBar(
         title: Text('套餐管理'),
         centerTitle: true,
+        actions: [
+          IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => SetEdit()));
+              })
+        ],
       ),
       body: _sets.length > 0 ? _body() : _emptyBody(),
       // body: _sets.length > 0 ? _body() : _emptyBody(),
