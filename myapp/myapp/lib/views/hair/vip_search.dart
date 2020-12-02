@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/hair/vip.dart';
+import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:provider/provider.dart';
 
 class VipSearch extends SearchDelegate<String> {
+  @override
+  String get searchFieldLabel => "请输入姓名或手机号搜索";
   @override
   List<Widget> buildActions(BuildContext context) {
     return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
@@ -35,25 +40,52 @@ class VipSearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    print('------$query');
     var data = {
       'shop_id': Provider.of<ShopModel>(context).shop.id,
-      'name': query
+      'key': query ?? ''
     };
-    // HairApi.pageVip(data)
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) => ListTile(
-        title: RichText(
-          text: TextSpan(
-              text: 'adf',
-              style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-              children: [
-                TextSpan(text: '55555', style: TextStyle(color: Colors.grey))
-              ]),
-        ),
-      ),
+    return FutureBuilder(
+      future: HairApi.pageVip(data),
+      initialData: {},
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          PageInfo page = snapshot.data;
+          if (page.data == null || page.data.isEmpty) {
+            return Center(
+              child: RaisedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        new MaterialPageRoute(builder: (context) => VipEdit()));
+                  },
+                  child: Text('未找到联系人，点击新建')),
+            );
+          } else {
+            return ListView.builder(
+                itemCount: page.total,
+                itemBuilder: (context, index) {
+                  var item = page.data[index];
+                  Vip vip = Vip.fromJson(item);
+                  return ListTile(
+                    title: RichText(
+                      text: TextSpan(
+                          text: '${vip.name}',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                          children: [
+                            TextSpan(
+                                text: '', style: TextStyle(color: Colors.grey))
+                          ]),
+                    ),
+                    trailing: Text('${vip.phone}'),
+                  );
+                });
+          }
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 }

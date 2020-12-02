@@ -1,7 +1,7 @@
+import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
 import 'package:myapp/models/hair/set.dart';
-import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
 
 class HairApi {
@@ -34,12 +34,14 @@ class HairApi {
     return res;
   }
 
-  static Future<List<Vip>> pageVip(var data) async {
+  static Future saveVip(var vip) async {
+    Result res = await $.post('hair/vip/save', data: vip);
+    return res;
+  }
+
+  static Future<PageInfo> pageVip(var data) async {
     Result res = await $.post('hair/vips', data: data);
-    List<Vip> vips = [];
-    for (var item in res.data) {
-      vips.add(Vip.fromJson(new Map.from(item)));
-    }
+    PageInfo vips = PageInfo.fromJson(res.data);
     return vips;
   }
 }

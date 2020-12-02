@@ -6,6 +6,7 @@ import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/routes/home.dart';
 import 'package:myapp/routes/login.dart';
+import 'package:myapp/theme/yellowTheme.dart';
 import 'package:provider/provider.dart';
 
 List<CameraDescription> cameras = [];
@@ -29,12 +30,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: '小店',
             home: HomeRoute(),
-            theme: ThemeData(
-              buttonTheme: ButtonThemeData(
-                  minWidth: double.infinity,
-                  height: 50.0,
-                  buttonColor: Colors.blue),
-            ),
+            theme: yellowTheme,
             localizationsDelegates: [
               PickerLocalizationsDelegate.delegate,
               GlobalMaterialLocalizations.delegate,

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/api/hair.dart';
@@ -49,10 +48,10 @@ class _ShopCardState extends State<ShopCard> {
               child: Column(
                 children: [
                   _fieldName(),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  _fieldPhone(),
+                  // SizedBox(
+                  //   height: 10,
+                  // ),
+                  // _fieldPhone(),
                   SizedBox(
                     height: 10,
                   ),
@@ -131,10 +130,9 @@ class _ShopCardState extends State<ShopCard> {
           filled: true,
           counterStyle: TextStyle(color: Colors.white),
           fillColor: Colors.transparent,
-          suffixIcon: Icon(Icons.clear),
+          suffixIcon: Icon(Icons.search),
           border: UnderlineInputBorder(),
-          hintText: '请输入会员姓名'),
-      validator: (value) => value.trim().isNotEmpty ? null : '姓名不能为空',
+          hintText: '请选择会员'),
       onTap: () {
         showSearch(context: context, delegate: VipSearch()).then((value) {
           print('showSearch------>$value');
