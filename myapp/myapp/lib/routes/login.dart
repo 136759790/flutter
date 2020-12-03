@@ -22,8 +22,10 @@ class _LoginRouteState extends State<LoginRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('登录'),
+        centerTitle: true,
       ),
       body: Padding(
         padding: EdgeInsets.all(20),
@@ -42,6 +44,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     value.trim().isNotEmpty ? null : '手机号码不能为空',
               ),
               TextFormField(
+                obscureText: true,
                 controller: _pwd,
                 decoration: InputDecoration(
                     labelText: '密码',
@@ -49,8 +52,9 @@ class _LoginRouteState extends State<LoginRoute> {
                     prefixIcon: Icon(Icons.visibility_off)),
                 validator: (value) => value.trim().isNotEmpty ? null : '密码不能为空',
               ),
-              Padding(
-                padding: EdgeInsets.all(40),
+              Container(
+                width: 1000,
+                padding: EdgeInsets.all(20),
                 child: FlatButton(
                   onPressed: () {
                     if ((_formKey.currentState as FormState).validate()) {
