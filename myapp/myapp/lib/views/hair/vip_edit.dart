@@ -80,7 +80,7 @@ class _VipEditState extends State<VipEdit> {
       'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
     };
     HairApi.saveVip(data).then((value) {
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(_name.text);
     });
   }
 }

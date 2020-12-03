@@ -223,12 +223,13 @@ class AccountMainState extends State<AccountMain> {
         child: Row(
           children: [
             Expanded(
-              child: Icon(
-                IconData(int.parse(_icons[item.icon_id]['code']),
-                    fontFamily: 'IconFonts'),
-                color: Colors.blue,
-                size: 30,
-              ),
+              // child: Icon(
+              //   IconData(int.parse(_icons[item.icon_id]['code']),
+              //       fontFamily: 'IconFonts'),
+              //   color: Colors.blue,
+              //   size: 30,
+              // ),
+              child: Text('data'),
               flex: 1,
             ),
             Expanded(

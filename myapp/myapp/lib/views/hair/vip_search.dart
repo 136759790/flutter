@@ -26,20 +26,15 @@ class VipSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      width: 100.0,
-      height: 100.0,
-      child: Card(
-        color: Colors.redAccent,
-        child: Center(
-          child: Text(query),
-        ),
-      ),
-    );
+    return _getResult(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    return _getResult(context);
+  }
+
+  Widget _getResult(BuildContext context) {
     var data = {
       'shop_id': Provider.of<ShopModel>(context).shop.id,
       'key': query ?? ''
@@ -54,10 +49,14 @@ class VipSearch extends SearchDelegate<String> {
             return Center(
               child: RaisedButton(
                   onPressed: () {
-                    Navigator.of(context).push(
-                        new MaterialPageRoute(builder: (context) => VipEdit()));
+                    Navigator.of(context)
+                        .push(new MaterialPageRoute(
+                            builder: (context) => VipEdit()))
+                        .then((value) {
+                      query = value;
+                    });
                   },
-                  child: Text('未找到联系人，点击新建')),
+                  child: Text('未找到会员信息，点击新建')),
             );
           } else {
             return ListView.builder(
@@ -66,6 +65,9 @@ class VipSearch extends SearchDelegate<String> {
                   var item = page.data[index];
                   Vip vip = Vip.fromJson(item);
                   return ListTile(
+                    onTap: () {
+                      Navigator.of(context).pop(vip.id.toString());
+                    },
                     title: RichText(
                       text: TextSpan(
                           text: '${vip.name}',

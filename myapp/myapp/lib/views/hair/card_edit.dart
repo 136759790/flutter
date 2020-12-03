@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/common/notifier.dart';
 import 'package:myapp/models/hair/set.dart';
+import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/views/hair/vip_search.dart';
+import 'package:provider/provider.dart';
 
 class ShopCard extends StatefulWidget {
   ShopCard({Key key}) : super(key: key);
@@ -14,11 +16,9 @@ class ShopCard extends StatefulWidget {
 class _ShopCardState extends State<ShopCard> {
   List<Set> _sets = [];
   TextEditingController _set = TextEditingController();
-  TextEditingController _ctime = TextEditingController(
-      text: DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now()));
+  TextEditingController _name = TextEditingController();
   Map _form = {
-    'name': '',
-    'phone': '',
+    'vip': null,
     'set': null,
   };
   GlobalKey _formKey = GlobalKey<FormState>();
@@ -48,10 +48,6 @@ class _ShopCardState extends State<ShopCard> {
               child: Column(
                 children: [
                   _fieldName(),
-                  // SizedBox(
-                  //   height: 10,
-                  // ),
-                  // _fieldPhone(),
                   SizedBox(
                     height: 10,
                   ),
@@ -59,25 +55,37 @@ class _ShopCardState extends State<ShopCard> {
                   SizedBox(
                     height: 30,
                   ),
-                  FlatButton(
-                    onPressed: () {
-                      if ((_formKey.currentState as FormState).validate()) {}
-                    },
-                    child: Text(
-                      '保存',
-                      style: TextStyle(color: Colors.white),
+                  Container(
+                    width: 1000,
+                    padding: EdgeInsets.all(20),
+                    child: FlatButton(
+                      onPressed: () {
+                        if ((_formKey.currentState as FormState).validate()) {
+                          var card = {
+                            'set_id': _form['set'].id,
+                            'vip_id': _form['vip'].id,
+                            'shop_id':
+                                Provider.of<ShopModel>(context, listen: false)
+                                    .shop
+                                    .id,
+                          };
+                          HairApi.saveCard(card).then((value) {
+                            Navigator.of(context).pop();
+                          });
+                        }
+                      },
+                      child: Text(
+                        '保存',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      color: Theme.of(context).primaryColor,
                     ),
-                    color: Theme.of(context).primaryColor,
                   ),
                 ],
               )),
         );
       }),
     );
-  }
-
-  Widget _btnSave() {
-    if ((_formKey.currentState as FormState).validate()) {}
   }
 
   Widget _fieldSet() {
@@ -122,47 +130,29 @@ class _ShopCardState extends State<ShopCard> {
 
   Widget _fieldName() {
     return TextFormField(
+      controller: _name,
       readOnly: true,
-      initialValue: _form['name'],
       autofocus: false,
       decoration: InputDecoration(
           prefixIcon: Icon(Icons.person),
           filled: true,
           counterStyle: TextStyle(color: Colors.white),
           fillColor: Colors.transparent,
-          suffixIcon: Icon(Icons.search),
+          suffixIcon: Icon(Icons.arrow_drop_down),
           border: UnderlineInputBorder(),
           hintText: '请选择会员'),
       onTap: () {
-        showSearch(context: context, delegate: VipSearch()).then((value) {
-          print('showSearch------>$value');
+        showSearch(context: context, delegate: VipSearch()).then((id) async {
+          Vip vip = await HairApi.getVip(id);
+          this.setState(() {
+            _form['vip'] = vip;
+            _name.text = vip.name;
+          });
         });
       },
       onSaved: (value) {
         setState(() {
           _form['name'] = value;
-        });
-      },
-    );
-  }
-
-  Widget _fieldPhone() {
-    return TextFormField(
-      initialValue: _form['phone'],
-      autofocus: false,
-      keyboardType: TextInputType.phone,
-      decoration: InputDecoration(
-          filled: true,
-          counterStyle: TextStyle(color: Colors.white),
-          fillColor: Colors.transparent,
-          suffixIcon: Icon(Icons.clear),
-          border: UnderlineInputBorder(),
-          hintText: '请输入会员手机号码',
-          prefixIcon: Icon(Icons.phone)),
-      validator: (value) => value.trim().isNotEmpty ? null : '手机号码不能为空',
-      onSaved: (value) {
-        setState(() {
-          _form['phone'] = value;
         });
       },
     );
