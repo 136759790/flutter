@@ -20,6 +20,9 @@ class UserNotifier extends ChangeNotifier {
 
   get user {
     var str = Hive.box(Global.CONFIG).get('user');
+    if (str == null) {
+      return null;
+    }
     return User.fromJson(json.decode(str));
   }
 }

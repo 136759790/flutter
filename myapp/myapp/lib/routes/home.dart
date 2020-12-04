@@ -16,7 +16,6 @@ import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:myapp/views/hair/shop.dart';
 import 'package:myapp/views/hair/shop_list.dart';
-import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -25,57 +24,24 @@ class HomeRoute extends StatefulWidget {
 }
 
 class _HomeRouteState extends State<HomeRoute> {
-  int _currentIndex = 0;
   String status = "unlogin"; //unlogin,unshop,unproject
-  StatefulWidget _currentPage = AccountMain();
-  _onTap(int index) {
-    switch (index) {
-      case 0:
-        _currentPage = AccountMain();
-        break;
-      case 1:
-        _currentPage = HairShop();
-        break;
-    }
-    setState(() {
-      _currentIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: _check(context),
       builder: (context, snapshot) {
-        print('renderrenderrenderrenderrenderrenderrenderrenderrender');
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.data == "unlogin") {
             return LoginRoute();
           } else if (snapshot.data == "unshop") {
             return ShopList();
           } else {
-            return Scaffold(
-                body: _currentPage,
-                // floatingActionButton: BtnAdd(),
-                drawer: DrawerWidget(),
-                bottomNavigationBar: BottomNavigationBar(
-                  currentIndex: this._currentIndex,
-                  items: [
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.home), title: Text('首页')),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.book), title: Text('会员卡')),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.music_note), title: Text('理发')),
-                  ],
-                  onTap: _onTap,
-                ));
+            return HomePage();
           }
         } else {
           return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.greenAccent.shade700,
-            ),
+            child: CircularProgressIndicator(),
           );
         }
       },
@@ -93,14 +59,13 @@ Future<String> _check(BuildContext context) async {
     } else {
       bool isLogin = await UserApi.isLogin();
       if (!isLogin) {
-        UserApi.login(user.account, user.password).then((data) {
-          if (data.status != 1) {
-            return "unlogin";
-          } else {
-            Provider.of<UserNotifier>(context, listen: false).user =
-                User.fromJson(new Map.from(data.data));
-          }
-        });
+        var res = await UserApi.login(user.account, user.password);
+        if (res.data.status != 1) {
+          return "unlogin";
+        } else {
+          Provider.of<UserNotifier>(context, listen: false).user =
+              User.fromJson(new Map.from(res.data));
+        }
       }
     }
   }
@@ -109,5 +74,51 @@ Future<String> _check(BuildContext context) async {
     return "unshop";
   } else {
     return "ok";
+  }
+}
+
+class HomePage extends StatefulWidget {
+  HomePage({Key key}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 0;
+  String status = "unlogin"; //unlogin,unshop,unproject
+  StatefulWidget _currentPage = HairShop();
+  _onTap(int index) {
+    switch (index) {
+      case 0:
+        _currentPage = AccountMain();
+        break;
+      case 1:
+        _currentPage = HairShop();
+        break;
+    }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: Scaffold(
+            body: _currentPage,
+            drawer: DrawerWidget(),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: this._currentIndex,
+              items: [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.home), title: Text('首页')),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.book), title: Text('会员卡')),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.music_note), title: Text('理发')),
+              ],
+              onTap: _onTap,
+            )));
   }
 }

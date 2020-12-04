@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         builder: (context, user, child) {
           return MaterialApp(
             title: '小店',
+            navigatorKey: Global.navigatorKey,
             home: HomeRoute(),
             theme: yellowTheme,
             localizationsDelegates: [
@@ -40,14 +41,33 @@ class MyApp extends StatelessWidget {
               const Locale('zh', 'CH'),
               const Locale('en', 'US'),
             ],
-            routes: {
-              "login": (context) => LoginRoute(),
-              "home": (context) => HomeRoute(),
-              "language": (context) => HomeRoute(),
-            },
+            onGenerateRoute: _onGenerateRoute,
           );
         },
       ),
     );
+  }
+
+  Route _onGenerateRoute(RouteSettings settings) {
+    String routeName = settings.name;
+    print("Open page: $routeName");
+    // Check permissions
+    switch (routeName) {
+      case "home":
+        return MaterialPageRoute(builder: (context) {
+          return HomeRoute();
+        });
+      case "login":
+        return MaterialPageRoute(builder: (context) {
+          return LoginRoute();
+        });
+      default:
+        return MaterialPageRoute(builder: (BuildContext context) {
+          return Scaffold(
+              body: Center(
+            child: Text("Page not found"),
+          ));
+        });
+    }
   }
 }

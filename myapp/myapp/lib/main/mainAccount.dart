@@ -29,7 +29,7 @@ class AccountMainState extends State<AccountMain> {
     Database db = await DBManager.getDb();
     Project p = Provider.of<ProjectModel>(context, listen: false).project;
     List<Map> data = await db.rawQuery(
-        'select * from account where project_id = ${p.id} order by id desc');
+        'select * from account where project_id = 1 order by id desc');
     Map<String, AccountGroup> map = {};
     if (data != null && data.length > 0) {
       for (var item in data) {
@@ -78,7 +78,7 @@ class AccountMainState extends State<AccountMain> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '小店记账-${Provider.of<ProjectModel>(context, listen: false).project.name}',
+          '小店记账-',
         ),
         centerTitle: true,
         leading: IconButton(

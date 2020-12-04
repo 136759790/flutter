@@ -5,7 +5,6 @@ import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
-import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:provider/provider.dart';
 
 class HairShop extends StatefulWidget {
@@ -18,27 +17,31 @@ class HairShop extends StatefulWidget {
 class _HairShopState extends State<HairShop> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text('商铺'),
-        centerTitle: true,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {
-                showSearch(context: context, delegate: SearchBarShop());
-              })
-        ],
-      ),
-      body: _body(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => ShopCard()));
-        },
-        heroTag: "addCard",
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text('商铺'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: SearchBarShop());
+                })
+          ],
+        ),
+        body: _body(),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => ShopCard()));
+          },
+          heroTag: "addCard",
+        ),
       ),
     );
   }
@@ -106,5 +109,26 @@ class _HairShopState extends State<HairShop> {
             return Center(child: CircularProgressIndicator());
           }
         });
+  }
+
+  Future<bool> _onWillPop() {
+    showDialog(
+          context: context,
+          builder: (context) => new AlertDialog(
+            title: new Text('Are you sure?'),
+            content: new Text('Do you want to exit an App'),
+            actions: <Widget>[
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: new Text('No'),
+              ),
+              new FlatButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: new Text('Yes'),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 }

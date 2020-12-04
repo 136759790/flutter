@@ -13,6 +13,7 @@ const _themes = <MaterialColor>[
 ];
 
 class Global {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   static String CONFIG = 'config';
   static String PROJECTS = 'projects';
   static String SHOP = 'shop';

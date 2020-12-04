@@ -44,20 +44,20 @@ class DrawerState extends State<DrawerWidget> {
                     fit: BoxFit.cover,
                     image: AssetImage('assets/images/bg_flower.jpg'))),
           ),
-          ListTile(
-            title: Text('切换项目'),
-            subtitle: Text(
-              '${Provider.of<ProjectModel>(context).project.name}',
-            ),
-            trailing: Icon(Icons.swap_vertical_circle),
-            onTap: () {
-              print('switch project');
-              Navigator.push(
-                  context,
-                  new MaterialPageRoute(
-                      builder: (context) => new SwitchProject()));
-            },
-          ),
+          // ListTile(
+          //   title: Text('切换项目'),
+          //   subtitle: Text(
+          //     '${Provider.of<ProjectModel>(context).project.name}',
+          //   ),
+          //   trailing: Icon(Icons.swap_vertical_circle),
+          //   onTap: () {
+          //     print('switch project');
+          //     Navigator.push(
+          //         context,
+          //         new MaterialPageRoute(
+          //             builder: (context) => new SwitchProject()));
+          //   },
+          // ),
           ListTile(
             title: Text('店铺'),
             subtitle: Text(
