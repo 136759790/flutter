@@ -65,8 +65,14 @@ class DrawerState extends State<DrawerWidget> {
             ),
             trailing: Icon(Icons.swap_vertical_circle),
             onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => new ShopList()));
+              Navigator.push(
+                  context,
+                  new MaterialPageRoute(
+                      builder: (context) => new ShopList())).then((value) {
+                if (value) {
+                  Navigator.of(context).pop();
+                }
+              });
             },
           ),
           ListTile(

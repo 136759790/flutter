@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/shop.dart';
 import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
 import 'package:provider/provider.dart';
@@ -17,13 +18,16 @@ class HairShop extends StatefulWidget {
 class _HairShopState extends State<HairShop> {
   @override
   Widget build(BuildContext context) {
+    Shop shop = Provider.of<ShopModel>(context).shop;
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('商铺'),
+          leading: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer()),
+          title: Text('商铺-${shop.name}'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -55,6 +59,7 @@ class _HairShopState extends State<HairShop> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             PageInfo page = snapshot.data;
+            List cards = page.data;
             if (page.data == null || page.data.isEmpty) {
               return Center(child: Text('没有数据'));
             } else {
@@ -88,10 +93,11 @@ class _HairShopState extends State<HairShop> {
                           sliver: SliverList(
                               delegate:
                                   SliverChildBuilderDelegate((context, index) {
+                            Map card = cards[index];
                             return Column(children: [
                               ListTile(
                                 // dense: true,
-                                title: Text("赵晓腾  13699298074"),
+                                title: Text("${card['name']}"),
                                 trailing: Text('剩余6次'),
                               ),
                               Divider()
@@ -100,7 +106,7 @@ class _HairShopState extends State<HairShop> {
                         ))
                       ],
                     ),
-                    flex: 5,
+                    flex: cards.length,
                   )
                 ],
               );
