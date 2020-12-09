@@ -121,7 +121,7 @@ class _HairShopState extends State<HairShop> {
                         ))
                       ],
                     ),
-                    flex: cards.length,
+                    flex: 5,
                   )
                 ],
               );

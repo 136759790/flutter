@@ -43,7 +43,7 @@ class Http {
           // dio.clear();
           print('++++++++++++++++++++++++++++++$res');
         }, onError: (DioError err) {
-          print('*********************************${err.response.statusCode}');
+          print('*********************************${err}');
           if (err.response != null && err.response.statusCode == 401) {
             // cancelToken.cancel("logout");
             Global.navigatorKey.currentState
