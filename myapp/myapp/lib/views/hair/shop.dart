@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/hair/card.dart';
 import 'package:myapp/models/shop.dart';
 import 'package:myapp/views/hair/card_edit.dart';
+import 'package:myapp/views/hair/card_view.dart';
 import 'package:myapp/views/hair/shop_search.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +44,12 @@ class _HairShopState extends State<HairShop> {
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => ShopCard()));
+                .push(MaterialPageRoute(builder: (context) => ShopCard()))
+                .then((value) {
+              if (value) {
+                setState(() {});
+              }
+            });
           },
           heroTag: "addCard",
         ),
@@ -93,16 +100,24 @@ class _HairShopState extends State<HairShop> {
                           sliver: SliverList(
                               delegate:
                                   SliverChildBuilderDelegate((context, index) {
-                            Map card = cards[index];
+                            List cards = page.data;
+                            HairCard card = HairCard.fromJson(cards[index]);
                             return Column(children: [
                               ListTile(
-                                // dense: true,
-                                title: Text("${card['name']}"),
-                                trailing: Text('剩余6次'),
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => CardView(card.id)));
+                                },
+                                leading: CircleAvatar(
+                                  child: Text('${card.vip.name}'),
+                                ),
+                                title: Text("${card.name}"),
+                                subtitle: Text("${card.description}"),
+                                trailing: Text('剩余次数：${card.time}'),
                               ),
                               Divider()
                             ]);
-                          }, childCount: 10)),
+                          }, childCount: page.data.length)),
                         ))
                       ],
                     ),

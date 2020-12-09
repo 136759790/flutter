@@ -70,13 +70,12 @@ class _ShopCardState extends State<ShopCard> {
                                     .id,
                           };
                           HairApi.saveCard(card).then((value) {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pop(true);
                           });
                         }
                       },
                       child: Text(
                         '保存',
-                        style: TextStyle(color: Colors.white),
                       ),
                       color: Theme.of(context).primaryColor,
                     ),

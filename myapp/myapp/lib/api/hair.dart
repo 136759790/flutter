@@ -1,6 +1,7 @@
 import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
+import 'package:myapp/models/hair/card.dart';
 import 'package:myapp/models/hair/set.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
@@ -61,5 +62,16 @@ class HairApi {
     Result res = await $.post('hair/cards', data: data);
     PageInfo cards = PageInfo.fromJson(res.data);
     return cards;
+  }
+
+  static Future<HairCard> getCard(int id) async {
+    Result res = await $.get('hair/card/$id');
+    HairCard card = HairCard.fromJson(res.data);
+    return card;
+  }
+
+  static Future reduceCardTime(int id) async {
+    Result res = await $.get('hair/card/reduce/time/$id');
+    return res;
   }
 }
