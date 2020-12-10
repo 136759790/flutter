@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myapp/api/user.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/models/user.dart';
@@ -63,7 +64,6 @@ class _LoginRouteState extends State<LoginRoute> {
                           Map<String, dynamic> map = new Map.from(data.data);
                           map['password'] = _pwd.text;
                           map['account'] = _uname.text;
-                          print('map=>$map');
                           Provider.of<UserNotifier>(context, listen: false)
                               .user = User.fromJson(map);
                           Navigator.pushNamed(context, 'home');

@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/models/hair/card.dart';
 import 'package:myapp/views/hair/consume_record.dart';
@@ -11,9 +14,11 @@ class CardView extends StatefulWidget {
 }
 
 class _CardViewState extends State<CardView> {
+  TextEditingController _remark = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: Text('会员卡详情'),
           centerTitle: true,
@@ -25,6 +30,9 @@ class _CardViewState extends State<CardView> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 HairCard card = snapshot.data;
+                if (card == null) {
+                  return Center();
+                }
                 return Column(
                   children: [
                     ListTile(
@@ -43,7 +51,7 @@ class _CardViewState extends State<CardView> {
                       leading: Icon(Icons.notifications),
                       title: Text('剩余${card.residue_time}次'),
                       subtitle: Text(
-                          '共${card.time}次，已使用${card.residue_time - card.time}次'),
+                          '共${card.time}次，已使用${card.residue_time ?? 0 - card.time}次'),
                       trailing: Icon(Icons.keyboard_arrow_right),
                       onTap: () {
                         Navigator.of(context).push(MaterialPageRoute(
@@ -57,8 +65,41 @@ class _CardViewState extends State<CardView> {
                       width: 1000,
                       child: FlatButton(
                           onPressed: () async {
-                            await HairApi.reduceCardTime(widget.id);
-                            setState(() {});
+                            bool isConsume = await showDialog(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                      title: Text('确定要消费吗？'),
+                                      content: TextField(
+                                        controller: _remark,
+                                        maxLength: 128,
+                                        decoration:
+                                            InputDecoration(hintText: '请输入备注'),
+                                      ),
+                                      actions: [
+                                        RaisedButton(
+                                            child: Text('取消'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop(false);
+                                            }),
+                                        RaisedButton(
+                                          child: Text('确认'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop(true);
+                                          },
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ],
+                                    ));
+                            if (isConsume) {
+                              await HairApi.consumeCard({
+                                'card_id': widget.id,
+                                'remark': '${_remark.text}'
+                              });
+                              Fluttertoast.showToast(msg: '消费成功');
+                              setState(() {
+                                _remark.text = "";
+                              });
+                            }
                           },
                           child: Text('消费')),
                       color: Theme.of(context).primaryColor,

@@ -29,7 +29,7 @@ class _HairShopState extends State<HairShop> {
           leading: IconButton(
               icon: Icon(Icons.menu),
               onPressed: () => Scaffold.of(context).openDrawer()),
-          title: Text('商铺-${shop.name}'),
+          title: Text('${shop.name}'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -67,7 +67,7 @@ class _HairShopState extends State<HairShop> {
           if (snapshot.connectionState == ConnectionState.done) {
             PageInfo page = snapshot.data;
             List cards = page.data;
-            if (page.data == null || page.data.isEmpty) {
+            if (page == null || page.data == null || page.data.isEmpty) {
               return Center(child: Text('没有数据'));
             } else {
               return Column(
@@ -108,12 +108,24 @@ class _HairShopState extends State<HairShop> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => CardView(card.id)));
                                 },
-                                leading: CircleAvatar(
-                                  child: Text('${card.vip.name}'),
+                                title: Text(
+                                  "${card.name}",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
                                 ),
-                                title: Text("${card.name}"),
-                                subtitle: Text("${card.description}"),
-                                trailing: Text('剩余次数：${card.time}'),
+                                subtitle: Row(
+                                  children: [
+                                    Chip(
+                                      avatar: Icon(Icons.person),
+                                      label: Text('${card.vip.name}'),
+                                    ),
+                                    Chip(
+                                      avatar: Icon(Icons.phone),
+                                      label: Text('${card.vip.phone}'),
+                                    ),
+                                  ],
+                                ),
+                                trailing:
+                                    Text('剩余次数：${card.residue_time ?? 0}'),
                               ),
                               Divider()
                             ]);

@@ -2,6 +2,7 @@ import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
 import 'package:myapp/models/hair/card.dart';
+import 'package:myapp/models/hair/record.dart';
 import 'package:myapp/models/hair/set.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
@@ -70,8 +71,22 @@ class HairApi {
     return card;
   }
 
-  static Future reduceCardTime(int id) async {
-    Result res = await $.get('hair/card/reduce/time/$id');
+  static Future consumeCard(data) async {
+    Result res = await $.post('hair/card/consume', data: data);
     return res;
+  }
+
+  static Future rollbackRecord(int id) async {
+    Result res = await $.post('hair/card/consume/$id');
+    return res;
+  }
+
+  static Future<List<HairConsumeRecord>> getRecords(int card_id) async {
+    List<HairConsumeRecord> records = [];
+    Result res = await $.get('hair/card/consume/records?card_id=$card_id');
+    if (res.data.length > 0) {
+      res.data.forEach((i) => {records.add(HairConsumeRecord.fromJson(i))});
+    }
+    return records;
   }
 }

@@ -4,8 +4,6 @@ import 'package:myapp/common/notifier.dart';
 import 'package:myapp/views/hair/set_list.dart';
 import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/scan/scan.dart';
-import 'package:myapp/views/setting/setting.dart';
-import 'package:myapp/widgets/switch_project.dart';
 import 'package:provider/provider.dart';
 
 class DrawerWidget extends StatefulWidget {
@@ -81,14 +79,6 @@ class DrawerState extends State<DrawerWidget> {
             onTap: () {
               Navigator.push(context,
                   new MaterialPageRoute(builder: (context) => new SetList()));
-            },
-          ),
-          ListTile(
-            title: Text('系统设置'),
-            trailing: Icon(Icons.settings),
-            onTap: () {
-              Navigator.push(context,
-                  new MaterialPageRoute(builder: (context) => new Setting()));
             },
           ),
           ListTile(

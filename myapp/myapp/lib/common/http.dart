@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/result.dart';
 import 'package:cookie_jar/cookie_jar.dart';
@@ -38,7 +39,13 @@ class Http {
         .add(InterceptorsWrapper(onRequest: (RequestOptions options) {
           print('-----------------------------${options.path}');
         }, onResponse: (Response res) async {
-          print('-----------------------------${res.data['code']}');
+          int status = res.data['status'];
+          if (status != 1) {
+            print('--------sdfsdf---------------------${res.data['status']}');
+            String msgDetail = "${res.data['msgDetail']}";
+            Fluttertoast.cancel();
+            Fluttertoast.showToast(msg: msgDetail);
+          }
           // dio.lock();
           // dio.clear();
           print('++++++++++++++++++++++++++++++$res');
