@@ -23,6 +23,7 @@ environment:
 dependencies:
   # analyzer: ^0.39.0
   giffy_dialog: ^1.8.0
+  azlistview: ^1.1.0
   flutter_localizations:
     sdk: flutter
   flutter:

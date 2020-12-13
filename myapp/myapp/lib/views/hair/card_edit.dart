@@ -6,8 +6,10 @@ import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/views/hair/vip_search.dart';
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class ShopCard extends StatefulWidget {
-  ShopCard({Key key}) : super(key: key);
+  int id;
+  ShopCard({Key key, this.id});
 
   @override
   _ShopCardState createState() => _ShopCardState();
@@ -30,6 +32,14 @@ class _ShopCardState extends State<ShopCard> {
         _sets = data;
       });
     });
+    if (widget.id != null) {
+      HairApi.getVip(widget.id).then((vip) {
+        this.setState(() {
+          _form['vip'] = vip;
+          _name.text = vip.name;
+        });
+      });
+    }
   }
 
   @override
