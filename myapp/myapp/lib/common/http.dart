@@ -18,7 +18,7 @@ class Http {
   var dio = new Dio(new BaseOptions(
       responseType: ResponseType.json,
       contentType: Headers.jsonContentType,
-      baseUrl: 'http://api.grelove.com/',
+      baseUrl: 'https://api.grelove.com/',
       connectTimeout: 5000,
       receiveTimeout: 5000));
   Future<Result> get(String path, {Map<String, dynamic> params}) async {

@@ -4,9 +4,7 @@ import 'package:myapp/api/user.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/main/drawer.dart';
 import 'package:myapp/models/user.dart';
-import 'package:myapp/routes/login.dart';
 import 'package:myapp/views/hair/shop.dart';
-import 'package:myapp/views/hair/shop_list.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -19,52 +17,7 @@ class _HomeRouteState extends State<HomeRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _check(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.data == "unlogin") {
-            return LoginRoute();
-          } else if (snapshot.data == "unshop") {
-            return ShopList();
-          } else {
-            return HomePage();
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  }
-}
-
-Future<String> _check(BuildContext context) async {
-  User user = Provider.of<UserNotifier>(context, listen: false).user;
-  if (user == null) {
-    return "unlogin";
-  } else {
-    if (user.account == null || user.password == null) {
-      return "unlogin";
-    } else {
-      bool isLogin = await UserApi.isLogin();
-      if (!isLogin) {
-        var res = await UserApi.login(user.account, user.password);
-        if (res.data.status != 1) {
-          return "unlogin";
-        } else {
-          Provider.of<UserNotifier>(context, listen: false).user =
-              User.fromJson(new Map.from(res.data));
-        }
-      }
-    }
-  }
-  ShopModel shopModel = Provider.of<ShopModel>(context, listen: false);
-  if (shopModel == null || shopModel.shop == null) {
-    return "unshop";
-  } else {
-    return "ok";
+    return HomePage();
   }
 }
 
@@ -95,21 +48,53 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: Scaffold(
-            body: _currentPage,
-            drawer: DrawerWidget(),
-            bottomNavigationBar: BottomNavigationBar(
-              currentIndex: this._currentIndex,
-              items: [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.home), title: Text('首页')),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.book), title: Text('会员卡')),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.music_note), title: Text('理发')),
-              ],
-              onTap: _onTap,
-            )));
+    return FutureBuilder(
+        future: _check(context),
+        builder: (context, snapshot) {
+          return Container(
+              child: Scaffold(
+                  body: _currentPage,
+                  drawer: DrawerWidget(),
+                  bottomNavigationBar: BottomNavigationBar(
+                    currentIndex: this._currentIndex,
+                    items: [
+                      BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.home), title: Text('首页')),
+                      BottomNavigationBarItem(
+                          icon: Icon(CupertinoIcons.game_controller_solid), title: Text('会员卡')),
+                      BottomNavigationBarItem(
+                          icon: Icon(Icons.music_note), title: Text('理发')),
+                    ],
+                    onTap: _onTap,
+                  )));
+        });
+  }
+
+  Future<String> _check(BuildContext context) async {
+    User user = Provider.of<UserNotifier>(context, listen: false).user;
+    if (user == null) {
+      return "unlogin";
+    } else {
+      if (user.account == null || user.password == null) {
+        return "unlogin";
+      } else {
+        bool isLogin = await UserApi.isLogin();
+        if (!isLogin) {
+          var res = await UserApi.login(user.account, user.password);
+          if (res.data.status != 1) {
+            return "unlogin";
+          } else {
+            Provider.of<UserNotifier>(context, listen: false).user =
+                User.fromJson(new Map.from(res.data));
+          }
+        }
+      }
+    }
+    ShopModel shopModel = Provider.of<ShopModel>(context, listen: false);
+    if (shopModel == null || shopModel.shop == null) {
+      return "unshop";
+    } else {
+      return "ok";
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:myapp/models/hair/card.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/consume_record.dart';
+import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:provider/provider.dart';
 
 class VipView extends StatefulWidget {
@@ -26,15 +27,9 @@ class _VipViewState extends State<VipView> {
           title: Text('会员'),
           actions: [
             IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                          builder: (_) => ShopCard(id: widget.id)))
-                      .then((value) {
-                    setState(() {});
-                  });
-                })
+              icon: Icon(Icons.add),
+              onPressed: _newRefresh,
+            )
           ],
         ),
         body: Column(
@@ -50,14 +45,22 @@ class _VipViewState extends State<VipView> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         Vip vip = snapshot.data;
+                        String ctime = DateFormat('yyyy-MM-dd').format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                vip.ctime * 1000));
                         return ListTile(
                           title: Text('${vip.name}'),
-                          trailing: Text(
-                              '${DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(vip.ctime * 1000))}'),
-                          subtitle: Text('${vip.phone}'),
+                          trailing: Icon(Icons.keyboard_arrow_right),
+                          subtitle: Text('${vip.phone}  |  ${ctime}'),
                           leading: CircleAvatar(
-                            child: Text('${vip.name.substring(0, 1)}'),
+                            child: Text('${vip.name[0]}'),
                           ),
+                          onTap: () {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (_) => VipEdit(id: vip.id)))
+                                .then((value) => {this.setState(() {})});
+                          },
                         );
                       } else {
                         return Center(
@@ -78,51 +81,16 @@ class _VipViewState extends State<VipView> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       PageInfo page = snapshot.data;
                       List cards = page.data;
-                      return CustomScrollView(
-                        slivers: [
-                          SliverList(
-                              delegate:
-                                  SliverChildBuilderDelegate((context, index) {
-                            HairCard card = HairCard.fromJson(cards[index]);
-                            return Card(
-                              elevation: 10,
-                              margin: EdgeInsets.symmetric(
-                                  vertical: 2, horizontal: 10),
-                              shadowColor: Colors.black54,
-                              child: Column(children: [
-                                ListTile(
-                                  dense: true,
-                                  title: Text('${card.name}'),
-                                  subtitle: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '共${card.time}次  |  已用${card.residue_time}次   |   办理时间 ${DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(card.ctime * 1000))}',
-                                        ),
-                                        Text('${card.description}')
-                                      ]),
-                                  trailing: Icon(Icons.remove_red_eye),
-                                ),
-                                ButtonBar(
-                                  children: [
-                                    FlatButton(
-                                        onPressed: () {
-                                          Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ConsumeRecord(card.id)));
-                                        },
-                                        child: Text('查看记录')),
-                                    FlatButton(
-                                        onPressed: () {}, child: Text('点击消费'))
-                                  ],
-                                )
-                              ]),
-                            );
-                          }, childCount: cards.length))
-                        ],
-                      );
+                      if (cards == null || cards.isEmpty) {
+                        return Center(
+                          child: FlatButton(
+                            onPressed: _newRefresh,
+                            child: Text('无数据点击添加会员卡'),
+                          ),
+                        );
+                      } else {
+                        return CardsView(cards: cards);
+                      }
                     } else {
                       return Center(
                         child: CircularProgressIndicator(),
@@ -134,6 +102,64 @@ class _VipViewState extends State<VipView> {
           ],
         ),
       ),
+    );
+  }
+
+  void _newRefresh() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => VipEdit()))
+        .then((value) => {this.setState(() {})});
+  }
+}
+
+class CardsView extends StatelessWidget {
+  const CardsView({
+    Key key,
+    @required this.cards,
+  }) : super(key: key);
+
+  final List cards;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      slivers: [
+        SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+          HairCard card = HairCard.fromJson(cards[index]);
+          return Card(
+            elevation: 10,
+            margin: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
+            shadowColor: Colors.black54,
+            child: Column(children: [
+              ListTile(
+                dense: true,
+                title: Text('${card.name}'),
+                subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '共${card.time}次  |  已用${card.residue_time}次   |   办理时间 ${DateFormat('yyyy-MM-dd').format(DateTime.fromMillisecondsSinceEpoch(card.ctime * 1000))}',
+                      ),
+                      Text('${card.description}')
+                    ]),
+                trailing: Icon(Icons.remove_red_eye),
+              ),
+              ButtonBar(
+                children: [
+                  FlatButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ConsumeRecord(card.id)));
+                      },
+                      child: Text('查看记录')),
+                  FlatButton(onPressed: () {}, child: Text('点击消费'))
+                ],
+              )
+            ]),
+          );
+        }, childCount: cards.length))
+      ],
     );
   }
 }

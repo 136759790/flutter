@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/hair/vip.dart';
 import 'package:provider/provider.dart';
 
 class VipEdit extends StatefulWidget {
-  VipEdit({Key key}) : super(key: key);
+  int id;
+  VipEdit({this.id});
 
   @override
   _VipEditState createState() => _VipEditState();
 }
 
 class _VipEditState extends State<VipEdit> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.id != null) {
+      HairApi.getVip(widget.id)
+          .then((vip) => {_name.text = vip.name, _phone.text = vip.phone});
+    }
+  }
+
   TextEditingController _name = TextEditingController();
   TextEditingController _phone = TextEditingController();
   GlobalKey _formKey = GlobalKey<FormState>();
@@ -75,6 +86,7 @@ class _VipEditState extends State<VipEdit> {
 
   void _saveVip() {
     var data = {
+      'id': widget.id,
       'name': _name.text,
       'phone': _phone.text,
       'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id

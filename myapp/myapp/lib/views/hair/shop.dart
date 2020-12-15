@@ -8,6 +8,7 @@ import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
 import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
+import 'package:myapp/views/hair/vip_view.dart';
 import 'package:provider/provider.dart';
 
 class HairShop extends StatefulWidget {
@@ -62,13 +63,12 @@ class _HairShopState extends State<HairShop> {
       'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
     };
     return FutureBuilder(
-        future: HairApi.pageVip(data),
+        future: HairApi.getVips(data),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            PageInfo page = snapshot.data;
-            List<Vip> vips = List.from(page.data.map((e) => Vip.fromJson(e)));
+            List<Vip> vips = snapshot.data;
             SuspensionUtil.setShowSuspensionStatus(vips);
-            if (page == null || page.data == null || page.data.isEmpty) {
+            if (vips == null || vips.isEmpty) {
               return Center(child: Text('没有数据'));
             } else {
               return Column(
@@ -79,7 +79,7 @@ class _HairShopState extends State<HairShop> {
                       Expanded(
                           child: Card(
                         child: ListTile(
-                          title: Text('会员数量${page.total}'),
+                          title: Text('会员数量${vips.length}'),
                         ),
                       )),
                       Expanded(
@@ -140,20 +140,21 @@ class _HairShopState extends State<HairShop> {
 
   Widget _buildListItem(Vip vip) {
     return Column(
-      children: <Widget>[
+      children: [
         ListTile(
           leading: CircleAvatar(
-            backgroundColor: Colors.blue[700],
+            backgroundColor: Theme.of(context).primaryColor,
             child: Text(
               vip.name[0],
-              style: TextStyle(color: Colors.white),
             ),
           ),
-          title: Text(vip.name),
+          title: Text('${vip.name}(${vip.phone})'),
           onTap: () {
-            print("OnItemClick: $vip");
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => VipView(vip.id)))
+                .then((value) => {this.setState(() {})});
           },
-        )
+        ),
       ],
     );
   }

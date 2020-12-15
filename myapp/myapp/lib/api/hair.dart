@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
@@ -43,8 +45,14 @@ class HairApi {
   }
 
   static Future<PageInfo> pageVip(var data) async {
-    Result res = await $.post('hair/vips', data: data);
+    Result res = await $.post('hair/vip/page', data: data);
     PageInfo vips = PageInfo.fromJson(res.data);
+    return vips;
+  }
+
+  static Future<List<Vip>> getVips(var data) async {
+    Result res = await $.post('hair/vips', data: data);
+    List<Vip> vips = List.from(res.data.map((e) => Vip.fromJson(Map.from(e))));
     return vips;
   }
 
