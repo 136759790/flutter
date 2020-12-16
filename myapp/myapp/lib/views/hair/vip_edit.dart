@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/util.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:provider/provider.dart';
 
@@ -91,8 +92,10 @@ class _VipEditState extends State<VipEdit> {
       'phone': _phone.text,
       'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
     };
-    HairApi.saveVip(data).then((value) {
-      Navigator.of(context).pop(_name.text);
+    HairApi.saveVip(data).then((result) {
+      if (Util.isOk(result)) {
+        Navigator.of(context).pop(true);
+      }
     });
   }
 }
