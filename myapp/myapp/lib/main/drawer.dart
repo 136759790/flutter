@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/models/shop.dart';
+import 'package:myapp/models/user.dart';
 import 'package:myapp/views/hair/set_list.dart';
 import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/scan/scan.dart';
@@ -19,14 +21,15 @@ class DrawerState extends State<DrawerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print(Provider.of<UserNotifier>(context).user.toString());
+    User user = Provider.of<UserNotifier>(context).user;
+    Shop shop = Provider.of<ShopModel>(context, listen: false).shop;
     return Drawer(
       child: ListView(
         padding: EdgeInsets.all(0),
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              '${Provider.of<UserNotifier>(context).user.name}',
+              '${user != null ? user.name : ''}',
               style: TextStyle(color: Colors.black),
             ),
             accountEmail: Text(
@@ -59,7 +62,7 @@ class DrawerState extends State<DrawerWidget> {
           ListTile(
             title: Text('店铺'),
             subtitle: Text(
-              '${Provider.of<ShopModel>(context).shop.name}',
+              '${shop?.name}',
             ),
             trailing: Icon(Icons.swap_vertical_circle),
             onTap: () {

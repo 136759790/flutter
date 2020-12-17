@@ -70,6 +70,7 @@ class _VipViewState extends State<VipView> {
                       }
                     }),
               ),
+              flex: 2,
             ),
             Expanded(
               child: FutureBuilder<Object>(
@@ -101,7 +102,7 @@ class _VipViewState extends State<VipView> {
                       );
                     }
                   }),
-              flex: 6,
+              flex: 10,
             ),
           ],
         ),
@@ -152,6 +153,7 @@ class _CardListViewState extends State<CardListView> {
                 trailing: Icon(Icons.remove_red_eye),
               ),
               ButtonBar(
+                buttonHeight: 30,
                 children: [
                   FlatButton(
                       onPressed: () {

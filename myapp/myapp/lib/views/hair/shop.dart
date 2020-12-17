@@ -31,7 +31,7 @@ class _HairShopState extends State<HairShop> {
           leading: IconButton(
               icon: Icon(Icons.menu),
               onPressed: () => Scaffold.of(context).openDrawer()),
-          title: Text('${shop.name}'),
+          title: Text('${shop ?? '店铺'}'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -60,9 +60,8 @@ class _HairShopState extends State<HairShop> {
   }
 
   Widget _body() {
-    var data = {
-      'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
-    };
+    Shop shop = Provider.of<ShopModel>(context, listen: false).shop;
+    var data = {'shop_id': shop != null ? shop.id : null};
     return FutureBuilder(
         future: HairApi.getVips(data),
         builder: (context, snapshot) {
