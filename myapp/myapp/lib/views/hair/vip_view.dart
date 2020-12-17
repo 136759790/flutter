@@ -89,7 +89,10 @@ class _VipViewState extends State<VipView> {
                           ),
                         );
                       } else {
-                        return CardsView(cards: cards);
+                        return CardsView(
+                          cards: cards,
+                          id: widget.id,
+                        );
                       }
                     } else {
                       return Center(
@@ -107,7 +110,7 @@ class _VipViewState extends State<VipView> {
 
   void _newRefresh() {
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (_) => VipEdit()))
+        .push(MaterialPageRoute(builder: (_) => ShopCard(id: widget.id)))
         .then((value) => {this.setState(() {})});
   }
 }
@@ -116,9 +119,11 @@ class CardsView extends StatelessWidget {
   const CardsView({
     Key key,
     @required this.cards,
+    @required this.id,
   }) : super(key: key);
 
   final List cards;
+  final int id;
 
   @override
   Widget build(BuildContext context) {
