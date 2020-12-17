@@ -8,6 +8,7 @@ import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
 import 'package:myapp/views/hair/card_edit.dart';
 import 'package:myapp/views/hair/shop_search.dart';
+import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:myapp/views/hair/vip_view.dart';
 import 'package:provider/provider.dart';
 
@@ -45,14 +46,14 @@ class _HairShopState extends State<HairShop> {
           child: Icon(Icons.add),
           onPressed: () {
             Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => ShopCard()))
+                .push(MaterialPageRoute(builder: (context) => VipEdit()))
                 .then((value) {
               if (value) {
                 setState(() {});
               }
             });
           },
-          heroTag: "addCard",
+          heroTag: "addVip",
         ),
       ),
     );

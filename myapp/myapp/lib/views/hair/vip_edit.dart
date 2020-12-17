@@ -63,8 +63,8 @@ class _VipEditState extends State<VipEdit> {
                     hintText: '请输入会员手机'),
               ),
               Container(
+                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 0),
                 width: 1000,
-                padding: EdgeInsets.all(20),
                 child: FlatButton(
                   onPressed: () {
                     if ((_formKey.currentState as FormState).validate()) {
@@ -75,6 +75,16 @@ class _VipEditState extends State<VipEdit> {
                     '保存',
                   ),
                   color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Container(
+                width: 1000,
+                child: FlatButton(
+                  onPressed: () {},
+                  child: Text(
+                    '删除',
+                  ),
+                  color: Colors.grey[400],
                 ),
               )
             ],
@@ -92,7 +102,7 @@ class _VipEditState extends State<VipEdit> {
       'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
     };
     HairApi.saveVip(data).then((value) {
-      Navigator.of(context).pop(_name.text);
+      Navigator.of(context).pop(true);
     });
   }
 }

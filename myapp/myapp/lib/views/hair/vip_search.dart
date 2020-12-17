@@ -60,7 +60,7 @@ class VipSearch extends SearchDelegate<String> {
             );
           } else {
             return ListView.builder(
-                itemCount: page.total,
+                itemCount: page.data.length,
                 itemBuilder: (context, index) {
                   var item = page.data[index];
                   Vip vip = Vip.fromJson(item);
