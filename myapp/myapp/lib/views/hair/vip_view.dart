@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/Page.dart';
@@ -89,7 +90,7 @@ class _VipViewState extends State<VipView> {
                           ),
                         );
                       } else {
-                        return CardsView(
+                        return CardListView(
                           cards: cards,
                           id: widget.id,
                         );
@@ -115,23 +116,23 @@ class _VipViewState extends State<VipView> {
   }
 }
 
-class CardsView extends StatelessWidget {
-  const CardsView({
-    Key key,
-    @required this.cards,
-    @required this.id,
-  }) : super(key: key);
+class CardListView extends StatefulWidget {
+  CardListView({this.cards, this.id});
+  List cards;
+  int id;
+  @override
+  _CardListViewState createState() => _CardListViewState();
+}
 
-  final List cards;
-  final int id;
-
+class _CardListViewState extends State<CardListView> {
+  TextEditingController _remark = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
       slivers: [
         SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
-          HairCard card = HairCard.fromJson(cards[index]);
+          HairCard card = HairCard.fromJson(widget.cards[index]);
           return Card(
             elevation: 10,
             margin: EdgeInsets.symmetric(vertical: 2, horizontal: 10),
@@ -158,12 +159,50 @@ class CardsView extends StatelessWidget {
                             builder: (context) => ConsumeRecord(card.id)));
                       },
                       child: Text('查看记录')),
-                  FlatButton(onPressed: () {}, child: Text('点击消费'))
+                  FlatButton(
+                      onPressed: () async {
+                        bool isConsume = await showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                                  title: Text('确定要消费吗？'),
+                                  content: TextField(
+                                    controller: _remark,
+                                    maxLength: 128,
+                                    decoration:
+                                        InputDecoration(hintText: '请输入备注'),
+                                  ),
+                                  actions: [
+                                    RaisedButton(
+                                        child: Text('取消'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop(false);
+                                        }),
+                                    RaisedButton(
+                                      child: Text('确认'),
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                  ],
+                                ));
+                        if (isConsume) {
+                          await HairApi.consumeCard({
+                            'card_id': card.id,
+                            'remark': '${_remark.text}'
+                          });
+                          Fluttertoast.showToast(msg: '消费成功');
+                          setState(() {
+                            _remark.text = "";
+                          });
+                        }
+                      },
+                      child: Text('点击消费'))
                 ],
               )
             ]),
           );
-        }, childCount: cards.length))
+        }, childCount: widget.cards.length))
       ],
     );
   }

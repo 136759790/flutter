@@ -25,6 +25,11 @@ class _ConsumeRecordState extends State<ConsumeRecord> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               List<HairConsumeRecord> records = snapshot.data['records'];
+              if (records == null || records.length == 0) {
+                return Center(
+                  child: Text('没有数据'),
+                );
+              }
               return ListView.separated(
                 itemCount: records.length,
                 separatorBuilder: (BuildContext context, int index) {

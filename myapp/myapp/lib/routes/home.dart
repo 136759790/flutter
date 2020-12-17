@@ -59,11 +59,12 @@ class _HomePageState extends State<HomePage> {
                     currentIndex: this._currentIndex,
                     items: [
                       BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.home), title: Text('首页')),
+                          icon: Icon(CupertinoIcons.home), title: Text('会员信息')),
                       BottomNavigationBarItem(
-                          icon: Icon(CupertinoIcons.game_controller_solid), title: Text('会员卡')),
+                          icon: Icon(CupertinoIcons.game_controller_solid),
+                          title: Text('套餐')),
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.music_note), title: Text('理发')),
+                          icon: Icon(Icons.music_note), title: Text('我的')),
                     ],
                     onTap: _onTap,
                   )));

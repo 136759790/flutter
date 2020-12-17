@@ -1,5 +1,5 @@
-name: myapp
-description: A new Flutter project.
+name: 'myapp'
+description: '理发师管理软件.'
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
@@ -56,24 +56,14 @@ dev_dependencies:
   json_serializable: ^3.5.0
   # hive_generator: ^0.7.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
   assets:
     - assets/images/bg_flower.jpg
-    - assets/data/sql1.json
-    - assets/data/sql2.json
-  fonts: 
-    - family: IconFonts
-      fonts:
-        - asset: assets/icons/iconfont.ttf
+  # fonts: 
+    # - family: IconFonts
+    #   fonts:
+        # - asset: assets/icons/iconfont.ttf
   # fonts:
   #   - family: IconFonts
   #     fonts:
