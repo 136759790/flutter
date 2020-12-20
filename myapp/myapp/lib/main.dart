@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_picker/flutter_picker.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/routes/error.dart';
 import 'package:myapp/routes/home.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:myapp/theme/yellowTheme.dart';
@@ -54,13 +55,14 @@ class MyApp extends StatelessWidget {
     // Check permissions
     switch (routeName) {
       case "home":
-        return MaterialPageRoute(builder: (context) {
-          return HomeRoute();
-        });
+        return MaterialPageRoute(builder: (context) => HomeRoute());
+        break;
       case "login":
-        return MaterialPageRoute(builder: (context) {
-          return LoginRoute();
-        });
+        return MaterialPageRoute(builder: (context) => LoginRoute());
+        break;
+      case "error":
+        return MaterialPageRoute(builder: (context) => ErrorPage());
+        break;
       default:
         return MaterialPageRoute(builder: (BuildContext context) {
           return Scaffold(

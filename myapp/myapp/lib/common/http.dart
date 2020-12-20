@@ -51,10 +51,31 @@ class Http {
           print('++++++++++++++++++++++++++++++$res');
         }, onError: (DioError err) {
           print('*********************************${err}');
-          if (err.response != null && err.response.statusCode == 401) {
-            // cancelToken.cancel("logout");
-            Global.navigatorKey.currentState
-                .pushNamedAndRemoveUntil('login', (route) => route == null);
+          print('*********************************${err.type}');
+          switch (err.type) {
+            case DioErrorType.RESPONSE:
+              if (err.response != null && err.response.statusCode == 401) {
+                Global.navigatorKey.currentState
+                    .pushNamedAndRemoveUntil('login', (route) => route == null);
+              } else {
+                Global.navigatorKey.currentState
+                    .pushNamedAndRemoveUntil('error', (route) => route == null);
+              }
+              break;
+            case DioErrorType.CONNECT_TIMEOUT:
+              Fluttertoast.showToast(msg: '请求超时，请检查网络(001)');
+              Global.navigatorKey.currentState
+                  .pushNamedAndRemoveUntil('error', (route) => route == null);
+              break;
+            case DioErrorType.RECEIVE_TIMEOUT:
+              Fluttertoast.showToast(msg: '请求超时，请检查网络(002)');
+              break;
+            case DioErrorType.SEND_TIMEOUT:
+              Fluttertoast.showToast(msg: '请求超时，请检查网络(003)');
+              break;
+            default:
+              Global.navigatorKey.currentState
+                  .pushNamedAndRemoveUntil('error', (route) => route == null);
           }
         }));
   }

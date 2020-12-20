@@ -51,23 +51,29 @@ class _HomePageState extends State<HomePage> {
     return FutureBuilder(
         future: _check(context),
         builder: (context, snapshot) {
-          return Container(
-              child: Scaffold(
-                  body: _currentPage,
-                  drawer: DrawerWidget(),
-                  bottomNavigationBar: BottomNavigationBar(
-                    currentIndex: this._currentIndex,
-                    items: [
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.account_circle_outlined),
-                          title: Text('会员')),
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.card_giftcard), title: Text('套餐')),
-                      BottomNavigationBarItem(
-                          icon: Icon(Icons.person), title: Text('我的')),
-                    ],
-                    onTap: _onTap,
-                  )));
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
+                child: Scaffold(
+                    body: _currentPage,
+                    drawer: DrawerWidget(),
+                    bottomNavigationBar: BottomNavigationBar(
+                      currentIndex: this._currentIndex,
+                      items: [
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.account_circle_outlined),
+                            title: Text('会员')),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.card_giftcard), title: Text('套餐')),
+                        BottomNavigationBarItem(
+                            icon: Icon(Icons.person), title: Text('我的')),
+                      ],
+                      onTap: _onTap,
+                    )));
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
         });
   }
 
