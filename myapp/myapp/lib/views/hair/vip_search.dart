@@ -4,6 +4,7 @@ import 'package:myapp/common/Page.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/views/hair/vip_edit.dart';
+import 'package:myapp/views/hair/vip_view.dart';
 import 'package:provider/provider.dart';
 
 class VipSearch extends SearchDelegate<String> {
@@ -66,7 +67,10 @@ class VipSearch extends SearchDelegate<String> {
                   Vip vip = Vip.fromJson(item);
                   return ListTile(
                     onTap: () {
-                      Navigator.of(context).pop(vip.id.toString());
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(
+                              builder: (context) => VipView(vip.id)))
+                          .then((value) => {});
                     },
                     title: RichText(
                       text: TextSpan(

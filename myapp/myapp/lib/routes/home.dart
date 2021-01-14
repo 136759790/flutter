@@ -2,9 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/user.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/route.dart';
 import 'package:myapp/main/drawer.dart';
 import 'package:myapp/models/user.dart';
+import 'package:myapp/routes/login.dart';
+import 'package:myapp/views/hair/set_list.dart';
 import 'package:myapp/views/hair/shop.dart';
+import 'package:myapp/views/hair/shop_list.dart';
 import 'package:provider/provider.dart';
 
 class HomeRoute extends StatefulWidget {
@@ -38,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         _currentPage = HairShop();
         break;
       case 1:
-        _currentPage = HairShop();
+        _currentPage = SetList();
         break;
     }
     setState(() {
@@ -79,17 +83,19 @@ class _HomePageState extends State<HomePage> {
 
   Future<String> _check(BuildContext context) async {
     User user = Provider.of<UserNotifier>(context, listen: false).user;
+    var login = LoginRoute();
+    var shop = ShopList();
     if (user == null) {
-      return "unlogin";
+      Rt.to(context, login);
     } else {
       if (user.account == null || user.password == null) {
-        return "unlogin";
+        Rt.to(context, login);
       } else {
         bool isLogin = await UserApi.isLogin();
         if (!isLogin) {
           var res = await UserApi.login(user.account, user.password);
           if (res.data.status != 1) {
-            return "unlogin";
+            Rt.to(context, login);
           } else {
             Provider.of<UserNotifier>(context, listen: false).user =
                 User.fromJson(new Map.from(res.data));
@@ -99,9 +105,8 @@ class _HomePageState extends State<HomePage> {
     }
     ShopModel shopModel = Provider.of<ShopModel>(context, listen: false);
     if (shopModel == null || shopModel.shop == null) {
-      return "unshop";
-    } else {
-      return "ok";
+      Rt.to(context, shop);
     }
+    return "ok";
   }
 }

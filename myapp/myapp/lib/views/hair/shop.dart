@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/route.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
 import 'package:myapp/views/hair/shop_search.dart';
+import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:myapp/views/hair/vip_search.dart';
 import 'package:myapp/views/hair/vip_view.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +44,8 @@ class _HairShopState extends State<HairShop> {
             IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  showSearch(context: context, delegate: SearchBarShop());
+                  // showSearch(context: context, delegate: SearchBarShop());
+                  showSearch(context: context, delegate: VipSearch());
                 })
           ],
         ),
@@ -50,7 +53,7 @@ class _HairShopState extends State<HairShop> {
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            showSearch(context: context, delegate: VipSearch());
+            Rt.to(context, VipEdit());
           },
           heroTag: "addVip",
         ),
@@ -152,7 +155,7 @@ class _HairShopState extends State<HairShop> {
       children: [
         ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).primaryColor,
+            // backgroundColor: Theme.of(context).primaryColor,
             child: Text(
               vip.name[0],
             ),

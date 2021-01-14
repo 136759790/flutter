@@ -44,6 +44,11 @@ class HairApi {
     return res;
   }
 
+  static Future deleteVip(var id) async {
+    Result res = await $.post('hair/vip/delete?id=$id');
+    return res;
+  }
+
   static Future<PageInfo> pageVip(var data) async {
     Result res = await $.post('hair/vip/page', data: data);
     PageInfo vips = PageInfo.fromJson(res.data);
