@@ -41,7 +41,6 @@ class Http {
         }, onResponse: (Response res) async {
           int status = res.data['status'];
           if (status != 1) {
-            print('--------sdfsdf---------------------${res.data['status']}');
             String msgDetail = "${res.data['msgDetail']}";
             Fluttertoast.cancel();
             Fluttertoast.showToast(msg: msgDetail);
@@ -50,11 +49,11 @@ class Http {
           // dio.clear();
           print('++++++++++++++++++++++++++++++$res');
         }, onError: (DioError err) {
-          print('*********************************${err}');
-          print('*********************************${err.type}');
+          print('++++++++++++++++++++++++++++++$err');
           switch (err.type) {
             case DioErrorType.RESPONSE:
               if (err.response != null && err.response.statusCode == 401) {
+                print('++++++++++++12312312++++++++++++++++++$err');
                 Global.navigatorKey.currentState
                     .pushNamedAndRemoveUntil('login', (route) => route == null);
               } else {

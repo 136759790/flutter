@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/route.dart';
 import 'package:myapp/models/shop.dart';
-import 'package:myapp/views/hair/shop.dart';
+import 'package:myapp/routes/home.dart';
 import 'package:myapp/views/hair/shop_edit.dart';
 import 'package:provider/provider.dart';
 
@@ -76,53 +76,54 @@ class ShopListState extends State<ShopList> {
   }
 
   Widget _shopListView(List<Shop> shopList, Shop shopModel) {
-    return ListView.separated(
-      separatorBuilder: (context, index) => Divider(),
-      itemCount: shopList.length,
-      itemBuilder: (BuildContext context, int index) {
-        Shop shop = shopList[index];
-        bool _selected = shopModel != null && shopModel.id == shop.id;
-        return ListTile(
-          dense: true,
-          onTap: () {
-            showDialog(
-                context: context,
-                child: AlertDialog(
-                  title: Text('提示'),
-                  content: Text('要切换到项目【${shop.name}】?'),
-                  actions: [
-                    FlatButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text('取消')),
-                    FlatButton(
-                      onPressed: () {
-                        Navigator.pop(context, true);
-                      },
-                      child: Text('确定'),
-                    ),
-                  ],
-                )).then((value) {
-              if (value) {
-                Provider.of<ShopModel>(context, listen: false).shop = shop;
-                Navigator.of(context).pop(true);
-              }
-            });
-          },
-          leading: Icon(_selected
-              ? Icons.radio_button_checked
-              : Icons.radio_button_unchecked),
-          selected: _selected,
-          title: Text(shop.name),
-          trailing: IconButton(
-              icon: Icon(Icons.keyboard_arrow_right),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(
-                        builder: (context) => ShopEdit(id: shop.id)))
-                    .then((value) {});
-              }),
-        );
-      },
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: ListView.separated(
+        separatorBuilder: (context, index) => Divider(),
+        itemCount: shopList.length,
+        itemBuilder: (BuildContext context, int index) {
+          Shop shop = shopList[index];
+          bool _selected = shopModel != null && shopModel.id == shop.id;
+          return ListTile(
+            dense: true,
+            onTap: () {
+              showDialog(
+                  context: context,
+                  child: AlertDialog(
+                    title: Text('提示'),
+                    content: Text('要切换到项目【${shop.name}】?'),
+                    actions: [
+                      FlatButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text('取消')),
+                      FlatButton(
+                        onPressed: () {
+                          Navigator.pop(context, true);
+                        },
+                        child: Text('确定'),
+                      ),
+                    ],
+                  )).then((value) {
+                if (value) {
+                  Provider.of<ShopModel>(context, listen: false).shop = shop;
+                  Rt.toDelay(context, HomeRoute());
+                }
+              });
+            },
+            leading: Icon(Icons.home_filled),
+            selected: _selected,
+            title: Text(shop.name),
+            trailing: IconButton(
+                icon: Icon(Icons.keyboard_arrow_right),
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(
+                          builder: (context) => ShopEdit(id: shop.id)))
+                      .then((value) {});
+                }),
+          );
+        },
+      ),
     );
   }
 }

@@ -37,6 +37,10 @@ class ShopModel extends ChangeNotifier {
     var json = Hive.box(Global.CONFIG).get('shop');
     return json != null ? Shop.fromJson(new Map.from(json)) : null;
   }
+
+  void clear() {
+    Hive.box(Global.CONFIG).delete('shop');
+  }
 }
 
 class ProjectModel extends ChangeNotifier {

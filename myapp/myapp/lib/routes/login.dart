@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:myapp/api/user.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/route.dart';
 import 'package:myapp/models/user.dart';
+import 'package:myapp/routes/home.dart';
 import 'package:provider/provider.dart';
 
 class LoginRoute extends StatefulWidget {
@@ -66,7 +68,7 @@ class _LoginRouteState extends State<LoginRoute> {
                           map['account'] = _uname.text;
                           Provider.of<UserNotifier>(context, listen: false)
                               .user = User.fromJson(map);
-                          Navigator.pushNamed(context, 'home');
+                          Rt.to(context, HomeRoute());
                         }
                       });
                     }

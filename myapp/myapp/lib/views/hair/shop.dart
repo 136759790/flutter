@@ -6,7 +6,8 @@ import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/route.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
-import 'package:myapp/views/hair/shop_search.dart';
+import 'package:myapp/routes/login.dart';
+import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:myapp/views/hair/vip_search.dart';
 import 'package:myapp/views/hair/vip_view.dart';
@@ -19,46 +20,55 @@ class HairShop extends StatefulWidget {
   _HairShopState createState() => _HairShopState();
 }
 
-class _HairShopState extends State<HairShop> {
-  Future future;
+class _HairShopState extends State<HairShop>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
+    print('intintintinitntint');
   }
 
   @override
   Widget build(BuildContext context) {
-    Shop shop = Provider.of<ShopModel>(context).shop;
-    String shop_name = shop == null ? '店铺' : shop.name;
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          leading: IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () => Scaffold.of(context).openDrawer()),
-          title: Text('$shop_name'),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  // showSearch(context: context, delegate: SearchBarShop());
-                  showSearch(context: context, delegate: VipSearch());
-                })
-          ],
+    ShopModel shopm = Provider.of<ShopModel>(context, listen: false);
+    if (shopm == null || shopm.shop == null) {
+      Rt.toDelay(context, ShopList());
+      return Center(
+        child: Text('即将跳转到店铺选择页面。。。'),
+      );
+    } else {
+      Shop shop = shopm.shop;
+      String shop_name = shop == null ? '店铺' : shop.name;
+      return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            leading: IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () => Scaffold.of(context).openDrawer()),
+            title: Text('$shop_name'),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                  icon: Icon(Icons.search),
+                  onPressed: () {
+                    // showSearch(context: context, delegate: SearchBarShop());
+                    showSearch(context: context, delegate: VipSearch());
+                  })
+            ],
+          ),
+          body: _body(),
+          floatingActionButton: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Rt.to(context, VipEdit());
+            },
+            heroTag: "addVip",
+          ),
         ),
-        body: _body(),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            Rt.to(context, VipEdit());
-          },
-          heroTag: "addVip",
-        ),
-      ),
-    );
+      );
+    }
   }
 
   Future<List<Vip>> _getVips(var data) async {
@@ -155,15 +165,13 @@ class _HairShopState extends State<HairShop> {
       children: [
         ListTile(
           leading: CircleAvatar(
-            // backgroundColor: Theme.of(context).primaryColor,
             child: Text(
               vip.name[0],
             ),
           ),
           title: Text('${vip.name}(${vip.phone})'),
           onTap: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => VipView(vip.id)))
+            Rt.to(context, VipView(vip.id))
                 .then((value) => {this.setState(() {})});
           },
         ),
@@ -173,22 +181,24 @@ class _HairShopState extends State<HairShop> {
 
   Future<bool> _onWillPop() {
     showDialog(
-          context: context,
-          builder: (context) => new AlertDialog(
-            title: new Text('Are you sure?'),
-            content: new Text('Do you want to exit an App'),
-            actions: <Widget>[
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: new Text('No'),
-              ),
-              new FlatButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: new Text('Yes'),
-              ),
-            ],
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('Are you sure?'),
+        content: new Text('Do you want to exit an App'),
+        actions: <Widget>[
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('No'),
           ),
-        ) ??
-        false;
+          new FlatButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('Yes'),
+          ),
+        ],
+      ),
+    ).then((value) {});
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

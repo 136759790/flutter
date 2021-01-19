@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/common/notifier.dart';
 import 'package:myapp/models/hair/set.dart';
 import 'package:myapp/views/hair/set_edit.dart';
+import 'package:provider/provider.dart';
 
 class SetList extends StatefulWidget {
   SetList({Key key}) : super(key: key);
@@ -12,13 +14,6 @@ class SetList extends StatefulWidget {
 }
 
 class _SetListState extends State<SetList> {
-  List _sets = [];
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,67 +29,49 @@ class _SetListState extends State<SetList> {
               })
         ],
       ),
-      body: _sets.length > 0 ? _body() : _emptyBody(),
+      body: _body(),
       // body: _sets.length > 0 ? _body() : _emptyBody(),
     );
   }
 
-  _emptyBody() {
-    return Center(
-        child: Padding(
-      padding: const EdgeInsets.all(44.0),
-      child: FlatButton.icon(
-          color: Colors.blue,
-          onPressed: () {
-            Navigator.of(context)
-                .push(new MaterialPageRoute(builder: (context) => SetEdit()))
-                .then((value) {
-              if (value) {
-                this._init();
-              }
-            });
-          },
-          icon: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
-          label: Text(
-            '添加套餐',
-            style: TextStyle(color: Colors.white),
-          )),
-    ));
-  }
-
   _body() {
-    return ListView.separated(
-      itemCount: _sets.length,
-      separatorBuilder: (BuildContext context, int index) {
-        return Divider();
-      },
-      itemBuilder: (BuildContext context, int index) {
-        Set set = _sets[index];
-        return ListTile(
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(set.name),
-                flex: 3,
-              ),
-              Expanded(child: Text('${set.time}次'))
-            ],
-          ),
-          subtitle: Text(set.description),
-          trailing: Icon(Icons.edit),
-        );
-      },
-    );
+    return FutureBuilder<List>(
+        future: _getSet(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            var _sets = snapshot.data;
+            return ListView.separated(
+              itemCount: _sets.length,
+              separatorBuilder: (BuildContext context, int index) {
+                return Divider();
+              },
+              itemBuilder: (BuildContext context, int index) {
+                Set set = _sets[index];
+                return ListTile(
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(set.name),
+                        flex: 3,
+                      ),
+                      Expanded(child: Text('${set.time}次'))
+                    ],
+                  ),
+                  subtitle: Text(set.description),
+                  trailing: Icon(Icons.edit),
+                );
+              },
+            );
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
   }
 
-  void _init() {
-    HairApi.getSets({}).then((data) => {
-          this.setState(() {
-            _sets = data;
-          })
-        });
+  Future _getSet() {
+    var shop_id = Provider.of<ShopModel>(context, listen: false).shop.id;
+    return HairApi.getSets({"shop_id": shop_id});
   }
 }
