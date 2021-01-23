@@ -24,7 +24,7 @@ class _SetEditState extends State<SetEdit> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('data'),
+        title: Text('新增套餐'),
         centerTitle: true,
       ),
       body: _body(),
@@ -36,7 +36,7 @@ class _SetEditState extends State<SetEdit> {
       padding: EdgeInsets.all(12),
       child: Form(
         key: _formKey,
-        autovalidate: true,
+        autovalidateMode: AutovalidateMode.always,
         child: Column(
           children: [
             TextFormField(
@@ -45,7 +45,7 @@ class _SetEditState extends State<SetEdit> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '套餐名称',
-                  prefixIcon: Icon(Icons.shop)),
+                  prefixIcon: Icon(Icons.book)),
               validator: (value) => value.trim().isNotEmpty ? null : '套餐名称不能为空',
             ),
             Divider(),
@@ -57,7 +57,7 @@ class _SetEditState extends State<SetEdit> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '套餐价格',
-                  prefixIcon: Icon(Icons.shop)),
+                  prefixIcon: Icon(Icons.done_all_sharp)),
               validator: (value) => value.trim().isNotEmpty ? null : '套餐价格不能为空',
             ),
             Divider(),
@@ -69,7 +69,7 @@ class _SetEditState extends State<SetEdit> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '服务次数',
-                  prefixIcon: Icon(Icons.shop)),
+                  prefixIcon: Icon(Icons.time_to_leave)),
               validator: (value) => value.trim().isNotEmpty ? null : '服务次数不能为空',
             ),
             Divider(),
@@ -83,11 +83,15 @@ class _SetEditState extends State<SetEdit> {
                   prefixIcon: Icon(Icons.description)),
             ),
             Divider(),
-            FlatButton.icon(
-                color: Colors.blue,
-                onPressed: _saveSet,
-                icon: Icon(Icons.save),
-                label: Text('保存'))
+            Container(
+              width: 1000,
+              padding: EdgeInsets.all(20),
+              child: RaisedButton.icon(
+                  onPressed: _saveSet,
+                  color: Theme.of(context).primaryColor,
+                  icon: Icon(Icons.save),
+                  label: Text('保存')),
+            ),
           ],
         ),
       ),
