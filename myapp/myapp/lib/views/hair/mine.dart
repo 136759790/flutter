@@ -18,6 +18,7 @@ class _MineRouteState extends State<MineRoute> {
       appBar: AppBar(
         title: Text('我的信息'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: _body(),
     );
@@ -52,6 +53,16 @@ class _MineRouteState extends State<MineRoute> {
               Provider.of<ShopModel>(context, listen: false).clear();
             },
           ),
+          Divider(),
+          Container(
+            padding: EdgeInsets.all(20),
+            width: 1000,
+            child: RaisedButton(
+              onPressed: () {},
+              child: Text('切换账号'),
+              color: Theme.of(context).primaryColor,
+            ),
+          )
         ],
       ),
     );

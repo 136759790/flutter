@@ -14,7 +14,7 @@ class SetList extends StatefulWidget {
   _SetListState createState() => _SetListState();
 }
 
-class _SetListState extends State<SetList> {
+class _SetListState extends State<SetList> with AutomaticKeepAliveClientMixin {
   RefreshController _refreshController =
       RefreshController(initialRefresh: true);
   List<Set> _sets = [];
@@ -78,6 +78,7 @@ class _SetListState extends State<SetList> {
           itemBuilder: (BuildContext context, int index) {
             Set set = _sets[index];
             return ListTile(
+              dense: true,
               title: Row(
                 children: [
                   Expanded(
@@ -100,4 +101,7 @@ class _SetListState extends State<SetList> {
     var shop_id = Provider.of<ShopModel>(context, listen: false).shop.id;
     return HairApi.getSets({"shop_id": shop_id});
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

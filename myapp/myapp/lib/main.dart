@@ -92,6 +92,9 @@ class MyApp extends StatelessWidget {
     bool isLogin = await UserApi.isLogin();
     if (!isLogin) {
       User user = Provider.of<UserNotifier>(context, listen: false).user;
+      if (user == null) {
+        return false;
+      }
       Result result = await UserApi.login(user.name, user.password);
       return result.status == 1;
     }

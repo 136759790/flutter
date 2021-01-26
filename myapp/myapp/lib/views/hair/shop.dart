@@ -25,7 +25,6 @@ class _HairShopState extends State<HairShop>
   @override
   void initState() {
     super.initState();
-    print('intintintinitntint');
   }
 
   @override

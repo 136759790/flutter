@@ -34,25 +34,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _pagecontroller = PageController();
   int _currentIndex = 0;
   List<Widget> _bodyList = [HairShop(), SetList(), MineRoute()];
   _onTap(int index) {
     if (index == _currentIndex) {
       return;
     }
-    setState(() {
-      _currentIndex = index;
-    });
+    _pagecontroller.jumpToPage(index);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('xxxxx');
     return Container(
         child: Scaffold(
-            body: IndexedStack(
-              index: _currentIndex,
+            body: PageView(
+              controller: _pagecontroller,
               children: _bodyList,
+              onPageChanged: _onPageChanged,
+              physics: NeverScrollableScrollPhysics(),
             ),
             drawer: DrawerWidget(),
             bottomNavigationBar: BottomNavigationBar(
@@ -68,5 +68,11 @@ class _HomePageState extends State<HomePage> {
               ],
               onTap: _onTap,
             )));
+  }
+
+  _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }
