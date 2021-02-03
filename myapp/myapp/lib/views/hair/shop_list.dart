@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:myapp/api/hair.dart';
+import 'package:myapp/common/dialog/util.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/route.dart';
 import 'package:myapp/models/shop.dart';
@@ -62,6 +63,7 @@ class ShopListState extends State<ShopList> {
         child: Padding(
             padding: const EdgeInsets.all(44.0),
             child: RaisedButton(
+                color: Theme.of(context).primaryColor,
                 onPressed: () {
                   Navigator.of(context)
                       .push(new MaterialPageRoute(
@@ -72,7 +74,9 @@ class ShopListState extends State<ShopList> {
                     }
                   });
                 },
-                child: Text('暂无店铺，点击添加'))));
+                child: Text(
+                  '请先设置店铺',
+                ))));
   }
 
   Widget _shopListView(List<Shop> shopList, Shop shopModel) {
@@ -87,26 +91,11 @@ class ShopListState extends State<ShopList> {
           return ListTile(
             dense: true,
             onTap: () {
-              showDialog(
-                  context: context,
-                  child: AlertDialog(
-                    title: Text('提示'),
-                    content: Text('要切换到项目【${shop.name}】?'),
-                    actions: [
-                      FlatButton(
-                          onPressed: () => Navigator.pop(context, false),
-                          child: Text('取消')),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.pop(context, true);
-                        },
-                        child: Text('确定'),
-                      ),
-                    ],
-                  )).then((value) {
+              UtilDialog.showDialog(context, '确认要切换到${shop.name}店铺吗？')
+                  .then((value) {
                 if (value) {
                   Provider.of<ShopModel>(context, listen: false).shop = shop;
-                  Rt.toDelay(context, HomeRoute());
+                  Rt.toDelay(context, HomePage());
                 }
               });
             },

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:myapp/common/notifier.dart';
+import 'package:myapp/common/route.dart';
 import 'package:myapp/models/user.dart';
+import 'package:myapp/routes/login.dart';
+import 'package:myapp/views/hair/shop_list.dart';
 import 'package:provider/provider.dart';
 
 class MineRoute extends StatefulWidget {
@@ -33,32 +36,49 @@ class _MineRouteState extends State<MineRoute> {
           ListTile(
             leading: Icon(Icons.people),
             dense: true,
-            title: Text('姓名：'),
-            trailing: Text('${user.name}'),
+            title: Text('帐号：'),
+            trailing: Text('${user.account}'),
           ),
-          Divider(),
+          Divider(
+            height: 1,
+          ),
+          ListTile(
+            leading: Icon(Icons.email_outlined),
+            dense: true,
+            title: Text('邮箱：'),
+            trailing: Text('${user.email}'),
+          ),
+          Divider(
+            height: 1,
+          ),
           ListTile(
             leading: Icon(Icons.phone),
             dense: true,
             title: Text('手机：'),
             trailing: Text('${user.phone}'),
           ),
-          Divider(),
+          Divider(
+            height: 1,
+          ),
           ListTile(
-            leading: Icon(Icons.clear),
+            leading: Icon(Icons.switch_left),
             dense: true,
-            title: Text('清除店铺'),
+            title: Text('切换店铺'),
             trailing: Icon(Icons.keyboard_arrow_right),
             onTap: () {
-              Provider.of<ShopModel>(context, listen: false).clear();
+              Rt.toDelay(context, ShopList());
             },
           ),
-          Divider(),
+          Divider(
+            height: 1,
+          ),
           Container(
             padding: EdgeInsets.all(20),
             width: 1000,
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () {
+                Rt.toDelay(context, LoginRoute());
+              },
               child: Text('切换账号'),
               color: Theme.of(context).primaryColor,
             ),

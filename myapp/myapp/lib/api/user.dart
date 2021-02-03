@@ -1,12 +1,14 @@
-import 'dart:developer';
-
-import 'package:dio/dio.dart';
 import 'package:myapp/common/http.dart';
 import 'package:myapp/common/result.dart';
 
 class UserApi {
   static Future<bool> isLogin() async {
     Result res = await $.get('sys/isLogin');
+    return res.data;
+  }
+
+  static Future register(var data) async {
+    Result res = await $.post('user/register', data: data);
     return res.data;
   }
 

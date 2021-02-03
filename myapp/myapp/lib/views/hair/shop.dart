@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:myapp/api/hair.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/route.dart';
+import 'package:myapp/common/state/httpWidget.dart';
+import 'package:myapp/common/state/manager.dart';
 import 'package:myapp/models/hair/vip.dart';
 import 'package:myapp/models/shop.dart';
-import 'package:myapp/routes/login.dart';
 import 'package:myapp/views/hair/shop_list.dart';
 import 'package:myapp/views/hair/vip_edit.dart';
 import 'package:myapp/views/hair/vip_search.dart';
@@ -22,136 +23,109 @@ class HairShop extends StatefulWidget {
 
 class _HairShopState extends State<HairShop>
     with AutomaticKeepAliveClientMixin {
+  StatusManager smanager;
   @override
   void initState() {
     super.initState();
+    smanager = StatusManager();
+    _loadData();
   }
 
   @override
   Widget build(BuildContext context) {
-    ShopModel shopm = Provider.of<ShopModel>(context, listen: false);
-    if (shopm == null || shopm.shop == null) {
-      Rt.toDelay(context, ShopList());
-      return Center(
-        child: Text('即将跳转到店铺选择页面。。。'),
-      );
-    } else {
-      Shop shop = shopm.shop;
-      String shop_name = shop == null ? '店铺' : shop.name;
-      return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () => Scaffold.of(context).openDrawer()),
-            title: Text('$shop_name'),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    // showSearch(context: context, delegate: SearchBarShop());
-                    showSearch(context: context, delegate: VipSearch());
-                  })
-            ],
-          ),
-          body: _body(),
-          floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              Rt.to(context, VipEdit());
-            },
-            heroTag: "addVip",
-          ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          leading: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer()),
+          title: Text('会员列表'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: VipSearch());
+                })
+          ],
         ),
-      );
-    }
+        body: HttpWidget<List<Vip>>(
+          controller: smanager.controller,
+          httpBuilder: (context, t) {
+            return _body(t);
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            Rt.to(context, VipEdit());
+          },
+          heroTag: "addVip",
+        ),
+      ),
+    );
   }
 
-  Future<List<Vip>> _getVips(var data) async {
+  Future<List<Vip>> _getVips() async {
+    var data = {
+      'shop_id': Provider.of<ShopModel>(context, listen: false).shop.id
+    };
     List<Vip> vips = await HairApi.getVips(data);
     return vips;
   }
 
-  Widget _body() {
-    Shop shop = Provider.of<ShopModel>(context, listen: false).shop;
-    var data = {'shop_id': shop != null ? shop.id : null};
-    return FutureBuilder(
-        future: _getVips(data),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            List<Vip> vips = snapshot.data;
-            SuspensionUtil.setShowSuspensionStatus(vips);
-            if (vips == null || vips.isEmpty) {
-              return Center(child: Text('没有数据'));
-            } else {
-              return Column(
-                children: [
-                  Expanded(
-                      child: Row(
-                    children: [
-                      Expanded(
-                          child: Card(
-                        child: ListTile(
-                          title: Text('会员数量${vips.length}'),
-                        ),
-                      )),
-                      Expanded(
-                          child: Card(
-                        child: ListTile(
-                          title: Text('今日新增'),
-                        ),
-                      )),
-                    ],
-                  )),
-                  Expanded(
-                    child: AzListView(
-                        physics: BouncingScrollPhysics(),
-                        indexBarData: SuspensionUtil.getTagIndexList(vips),
-                        indexHintBuilder: (context, hint) {
-                          return Container(
-                            alignment: Alignment.center,
-                            width: 60.0,
-                            height: 60.0,
-                            decoration: BoxDecoration(
-                              color: Colors.blue[700].withAlpha(200),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Text(hint,
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 30.0)),
-                          );
-                        },
-                        indexBarMargin: EdgeInsets.all(10),
-                        indexBarOptions: IndexBarOptions(
-                          needRebuild: true,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[50],
-                              borderRadius: BorderRadius.circular(20.0),
-                              border: Border.all(
-                                  color: Colors.grey[300], width: .5)),
-                          downDecoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(20.0),
-                              border: Border.all(
-                                  color: Colors.grey[300], width: .5)),
-                        ),
-                        data: vips,
-                        itemCount: vips.length,
-                        itemBuilder: (context, index) {
-                          return _buildListItem(vips[index]);
-                        }),
-                    flex: 6,
-                  )
-                ],
-              );
-            }
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        });
+  Widget _body(List<Vip> vips) {
+    SuspensionUtil.setShowSuspensionStatus(vips);
+    if (vips == null || vips.isEmpty) {
+      return Center(child: Text('没有数据'));
+    } else {
+      return Container(
+        padding: EdgeInsets.fromLTRB(5, 20, 5, 0),
+        child: Column(
+          children: [
+            Expanded(
+              child: AzListView(
+                  physics: BouncingScrollPhysics(),
+                  indexBarData: SuspensionUtil.getTagIndexList(vips),
+                  indexHintBuilder: (context, hint) {
+                    return Container(
+                      alignment: Alignment.center,
+                      width: 60.0,
+                      height: 60.0,
+                      decoration: BoxDecoration(
+                        color: Colors.blue[700].withAlpha(200),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(hint,
+                          style:
+                              TextStyle(color: Colors.white, fontSize: 30.0)),
+                    );
+                  },
+                  indexBarMargin: EdgeInsets.all(10),
+                  indexBarOptions: IndexBarOptions(
+                    needRebuild: true,
+                    decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(20.0),
+                        border: Border.all(color: Colors.grey[300], width: .5)),
+                    downDecoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20.0),
+                        border: Border.all(color: Colors.grey[300], width: .5)),
+                  ),
+                  data: vips,
+                  itemCount: vips.length,
+                  itemBuilder: (context, index) {
+                    return _buildListItem(vips[index]);
+                  }),
+              flex: 6,
+            )
+          ],
+        ),
+      );
+    }
   }
 
   Widget _buildListItem(Vip vip) {
@@ -177,8 +151,8 @@ class _HairShopState extends State<HairShop>
     showDialog(
       context: context,
       builder: (context) => new AlertDialog(
-        title: new Text('Are you sure?'),
-        content: new Text('Do you want to exit an App'),
+        title: new Text('提示'),
+        content: new Text('确定要退出应用？'),
         actions: <Widget>[
           new FlatButton(
             onPressed: () => Navigator.of(context).pop(false),
@@ -191,6 +165,27 @@ class _HairShopState extends State<HairShop>
         ],
       ),
     ).then((value) {});
+  }
+
+  void _loadData() {
+    print(999999999999999);
+    ShopModel shopModel = Provider.of<ShopModel>(context, listen: false);
+    Shop shop = null;
+    if (shopModel == null) {
+      Rt.toDelay(context, ShopList());
+    } else {
+      shop = shopModel.shop;
+      if (shop == null) {
+        Rt.toDelay(context, ShopList());
+      } else {
+        smanager.loading();
+        _getVips().then((value) {
+          smanager.success(value);
+        }).catchError((e) {
+          smanager.error();
+        });
+      }
+    }
   }
 
   @override

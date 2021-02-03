@@ -47,9 +47,10 @@ class _ShopEditState extends State<ShopEdit> {
                   controller: _name,
                   autofocus: false,
                   decoration: InputDecoration(
-                      filled: true,
-                      border: OutlineInputBorder(),
-                      labelText: '店铺名称',
+                      // filled: true,
+                      // border: OutlineInputBorder(),
+                      counterText: "",
+                      hintText: '店铺名称',
                       prefixIcon: Icon(Icons.store)),
                   validator: (value) =>
                       value.trim().isNotEmpty ? null : '店铺名称不能为空',
@@ -86,7 +87,7 @@ class _ShopEditState extends State<ShopEdit> {
   void _saveShop(var name, var ctime, var id) {
     HairApi.saveShop({'name': name, 'ctime': ctime, 'id': id}).then((value) {
       Shop shop = Provider.of<ShopModel>(context, listen: false).shop;
-      if (shop.id == widget.id) {
+      if (shop != null && shop.id == widget.id) {
         shop.name = name;
         shop.ctime = int.parse(ctime.toString());
         Provider.of<ShopModel>(context, listen: false).shop = shop;

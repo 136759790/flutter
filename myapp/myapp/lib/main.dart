@@ -7,13 +7,11 @@ import 'package:myapp/api/user.dart';
 import 'package:myapp/common/global.dart';
 import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/result.dart';
-import 'package:myapp/models/shop.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/error.dart';
 import 'package:myapp/routes/home.dart';
 import 'package:myapp/routes/login.dart';
 import 'package:myapp/theme/yellowTheme.dart';
-import 'package:myapp/views/hair/shop_list.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -54,26 +52,29 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               title: '小店',
               navigatorKey: Global.navigatorKey,
-              home: FutureBuilder<bool>(
-                  future: _autoLogin(context),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.data) {
-                        return HomeRoute();
-                      } else {
-                        return LoginRoute();
-                      }
-                    } else {
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
+              home: HomePage(),
+              // FutureBuilder<bool>(
+              //     future: _autoLogin(context),
+              //     builder: (context, snapshot) {
+              //       if (snapshot.connectionState == ConnectionState.done) {
+              //         if (snapshot.data) {
+              //           print("init----before");
+              //           return HomePage();
+              //         } else {
+              //           return LoginRoute();
+              //         }
+              //       } else {
+              //         return Center(
+              //           child: CircularProgressIndicator(),
+              //         );
+              //       }
+              //     }),
               theme: yellowTheme,
               localizationsDelegates: [
                 RefreshLocalizations.delegate,
                 PickerLocalizationsDelegate.delegate,
                 GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate
               ],
               supportedLocales: [
@@ -89,6 +90,7 @@ class MyApp extends StatelessWidget {
   }
 
   Future<bool> _autoLogin(BuildContext context) async {
+    print('autoLoginautoLoginautoLoginautoLogin');
     bool isLogin = await UserApi.isLogin();
     if (!isLogin) {
       User user = Provider.of<UserNotifier>(context, listen: false).user;
@@ -106,7 +108,7 @@ class MyApp extends StatelessWidget {
     print("Open page: $routeName");
     switch (routeName) {
       case "home":
-        return MaterialPageRoute(builder: (context) => HomeRoute());
+        return MaterialPageRoute(builder: (context) => HomePage());
         break;
       case "login":
         return MaterialPageRoute(builder: (context) => LoginRoute());

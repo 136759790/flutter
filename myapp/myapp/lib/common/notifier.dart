@@ -25,6 +25,10 @@ class UserNotifier extends ChangeNotifier {
     }
     return User.fromJson(json.decode(str));
   }
+
+  void clear() {
+    Hive.box(Global.CONFIG).delete('user');
+  }
 }
 
 class ShopModel extends ChangeNotifier {

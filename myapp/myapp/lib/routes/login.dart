@@ -6,6 +6,7 @@ import 'package:myapp/common/notifier.dart';
 import 'package:myapp/common/route.dart';
 import 'package:myapp/models/user.dart';
 import 'package:myapp/routes/home.dart';
+import 'package:myapp/routes/register.dart';
 import 'package:provider/provider.dart';
 
 class LoginRoute extends StatefulWidget {
@@ -34,47 +35,62 @@ class _LoginRouteState extends State<LoginRoute> {
         padding: EdgeInsets.all(20),
         child: Form(
           key: _formKey,
-          autovalidate: true,
+          autovalidateMode: AutovalidateMode.always,
           child: Column(
             children: [
-              TextFormField(
-                controller: _uname,
-                decoration: InputDecoration(
-                    labelText: '手机号',
-                    hintText: '请输入手机号码',
-                    prefixIcon: Icon(Icons.person)),
-                validator: (value) =>
-                    value.trim().isNotEmpty ? null : '手机号码不能为空',
+              Container(
+                padding: EdgeInsets.all(10),
+                child: TextFormField(
+                  controller: _uname,
+                  decoration: InputDecoration(
+                      hintText: '请输入账号', prefixIcon: Icon(Icons.person)),
+                  validator: (value) =>
+                      value.trim().isNotEmpty ? null : '手机号码不能为空',
+                ),
               ),
-              TextFormField(
-                obscureText: true,
-                controller: _pwd,
-                decoration: InputDecoration(
-                    labelText: '密码',
-                    hintText: '请输入密码',
-                    prefixIcon: Icon(Icons.visibility_off)),
-                validator: (value) => value.trim().isNotEmpty ? null : '密码不能为空',
+              Container(
+                padding: EdgeInsets.all(10),
+                child: TextFormField(
+                  obscureText: true,
+                  controller: _pwd,
+                  decoration: InputDecoration(
+                      hintText: '请输入密码',
+                      prefixIcon: Icon(Icons.visibility_off)),
+                  validator: (value) =>
+                      value.trim().isNotEmpty ? null : '密码不能为空',
+                ),
               ),
               Container(
                 width: 1000,
                 padding: EdgeInsets.all(20),
                 child: FlatButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if ((_formKey.currentState as FormState).validate()) {
-                      UserApi.login(_uname.text, _pwd.text).then((data) {
-                        if (data.status == 1) {
-                          Map<String, dynamic> map = new Map.from(data.data);
-                          map['password'] = _pwd.text;
-                          map['account'] = _uname.text;
-                          Provider.of<UserNotifier>(context, listen: false)
-                              .user = User.fromJson(map);
-                          Rt.to(context, HomeRoute());
-                        }
-                      });
+                      var data = await UserApi.login(_uname.text, _pwd.text);
+                      if (data.status == 1) {
+                        Map<String, dynamic> map = new Map.from(data.data);
+                        map['password'] = _pwd.text;
+                        map['account'] = _uname.text;
+                        Provider.of<UserNotifier>(context, listen: false).user =
+                            User.fromJson(map);
+                        Provider.of<ShopModel>(context, listen: false).clear();
+                        Rt.to(context, HomePage());
+                      }
                     }
                   },
                   child: Text('登录'),
                   color: Theme.of(context).primaryColor,
+                ),
+              ),
+              Container(
+                child: GestureDetector(
+                  onTap: () {
+                    Rt.to(context, Register());
+                  },
+                  child: Text(
+                    '没有账号？点击注册！',
+                    style: TextStyle(color: Colors.black38),
+                  ),
                 ),
               )
             ],
