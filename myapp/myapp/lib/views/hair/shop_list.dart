@@ -95,7 +95,8 @@ class ShopListState extends State<ShopList> {
                   .then((value) {
                 if (value) {
                   Provider.of<ShopModel>(context, listen: false).shop = shop;
-                  Rt.toDelay(context, HomePage());
+                  Navigator.of(context).pop();
+                  // Rt.toDelay(context, HomePage());
                 }
               });
             },

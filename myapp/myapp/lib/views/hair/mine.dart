@@ -66,7 +66,8 @@ class _MineRouteState extends State<MineRoute> {
             title: Text('切换店铺'),
             trailing: Icon(Icons.keyboard_arrow_right),
             onTap: () {
-              Rt.toDelay(context, ShopList());
+              Rt.to(context, ShopList())
+                  .then((value) => print('zhaoxt gogogogogo'));
             },
           ),
           Divider(

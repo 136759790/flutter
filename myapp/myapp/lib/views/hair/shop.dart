@@ -172,7 +172,10 @@ class _HairShopState extends State<HairShop>
     ShopModel shopModel = Provider.of<ShopModel>(context, listen: false);
     Shop shop = null;
     if (shopModel == null) {
-      Rt.toDelay(context, ShopList());
+      Rt.to(context, ShopList()).then((value) {
+        print(8888888);
+        _loadData();
+      });
     } else {
       shop = shopModel.shop;
       if (shop == null) {
