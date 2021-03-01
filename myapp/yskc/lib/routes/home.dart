@@ -1,71 +1,50 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
-import 'package:yskc/api/user.dart';
-import 'package:yskc/common/global.dart';
-import 'package:yskc/common/notifier.dart';
-import 'package:yskc/common/result.dart';
-import 'package:yskc/main/bottomNav.dart';
-import 'package:yskc/main/btnAdd.dart';
-import 'package:yskc/main/drawer.dart';
-import 'package:yskc/models/project.dart';
-import 'package:yskc/models/user.dart';
-import 'package:yskc/routes/login.dart';
-import 'package:yskc/views/truck/truck.dart';
-import 'package:provider/provider.dart';
+import 'package:yskc/modules/truck/views/list.dart';
 
 class HomeRoute extends StatefulWidget {
+  HomeRoute({Key key}) : super(key: key);
+
   @override
-  State<StatefulWidget> createState() => _HomeRouteState();
+  _HomeRouteState createState() => _HomeRouteState();
 }
 
 class _HomeRouteState extends State<HomeRoute> {
+  final _pagecontroller = PageController();
+  int _currentIndex = 0;
+  List<Widget> _bodyList = [TruckList(), TruckList(), TruckList()];
+  _onTap(int index) {
+    if (index == _currentIndex) {
+      return;
+    }
+    _pagecontroller.jumpToPage(index);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _login(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (!snapshot.data) {
-            return LoginRoute();
-          } else {
-            return Scaffold(
-                body: TruckList(),
-                floatingActionButton: BtnAdd(),
-                drawer: DrawerWidget(),
-                bottomNavigationBar: MainBottomNav());
-          }
-        } else {
-          return Center(
-            child: CircularProgressIndicator(
-              backgroundColor: Colors.greenAccent.shade700,
+    return Container(
+        child: Scaffold(
+            body: PageView(
+              controller: _pagecontroller,
+              children: _bodyList,
+              onPageChanged: _onPageChanged,
+              physics: NeverScrollableScrollPhysics(),
             ),
-          );
-        }
-      },
-    );
+            drawer: Drawer(),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: this._currentIndex,
+              items: [
+                BottomNavigationBarItem(icon: Icon(Icons.account_circle_outlined), label: '会员'),
+                BottomNavigationBarItem(icon: Icon(Icons.category), label: '套餐'),
+                BottomNavigationBarItem(icon: Icon(Icons.person), label: '我的'),
+              ],
+              onTap: _onTap,
+            )));
   }
-}
 
-Future _login() async {
-  bool isLogin = await UserApi.isLogin();
-  if (!isLogin) {
-    String userInfo = Hive.box(Global.CONFIG).get('user');
-    print('object---->$userInfo');
-    if (userInfo == null || userInfo.isEmpty) {
-      return false;
-    }
-    User user = User.fromJson(json.decode(userInfo));
-    print(user.toString());
-    if (user.account == null || user.password == null) {
-      return false;
-    } else {
-      Result result = await UserApi.login(user.account, user.password);
-      return result.status == 1;
-    }
-  } else {
-    return true;
+  _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 }

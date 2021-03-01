@@ -13,12 +13,15 @@ const _themes = <MaterialColor>[
 ];
 
 class Global {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey();
   static String CONFIG = 'config';
   static String PROJECTS = 'projects';
+  static String SHOP = 'shop';
   static List<MaterialColor> get themes => _themes;
   static Future init() async {
     await Hive.initFlutter();
     await Hive.openBox(CONFIG);
     await Hive.openBox(PROJECTS);
+    await Hive.openBox(SHOP);
   }
 }
