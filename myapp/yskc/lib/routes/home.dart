@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yskc/modules/truck/views/list.dart';
+import 'package:yskc/modules/user/views/mine.dart';
 
 class HomeRoute extends StatefulWidget {
   HomeRoute({Key key}) : super(key: key);
@@ -12,12 +13,17 @@ class HomeRoute extends StatefulWidget {
 class _HomeRouteState extends State<HomeRoute> {
   final _pagecontroller = PageController();
   int _currentIndex = 0;
-  List<Widget> _bodyList = [TruckList(), TruckList(), TruckList()];
+  List<Widget> _bodyList = [TruckList(), TruckList(), MineRoute()];
   _onTap(int index) {
     if (index == _currentIndex) {
       return;
     }
     _pagecontroller.jumpToPage(index);
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override

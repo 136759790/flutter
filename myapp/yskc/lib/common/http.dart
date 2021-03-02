@@ -6,6 +6,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 var $ = Http();
+DefaultCookieJar cookieJar = DefaultCookieJar();
 var $baidu = new Dio(new BaseOptions(
     responseType: ResponseType.json,
     contentType: Headers.formUrlEncodedContentType,
@@ -14,7 +15,6 @@ var $baidu = new Dio(new BaseOptions(
 
 class Http {
   CancelToken cancelToken = CancelToken();
-  var cookieJar = CookieJar();
   var dio = new Dio(new BaseOptions(
       responseType: ResponseType.json,
       contentType: Headers.jsonContentType,

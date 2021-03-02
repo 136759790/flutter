@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:yskc/common/global.dart';
 import 'package:yskc/common/notifier.dart';
+import 'package:yskc/modules/user/model/user.dart';
 import 'package:yskc/routes/error.dart';
 import 'package:yskc/routes/home.dart';
 import 'package:yskc/routes/login.dart';
@@ -43,7 +44,7 @@ class MyApp extends StatelessWidget {
             child: MaterialApp(
               title: '元氏卡车',
               navigatorKey: Global.navigatorKey,
-              home: HomeRoute(),
+              home: _autoLogin(context),
               theme: Theme_blue,
               localizationsDelegates: [
                 RefreshLocalizations.delegate,
@@ -61,6 +62,15 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Widget _autoLogin(BuildContext context) {
+    User user = Provider.of<UserNotifier>(context, listen: false).user;
+    if (user == null) {
+      return LoginRoute();
+    } else {
+      return HomeRoute();
+    }
   }
 
   Route _onGenerateRoute(RouteSettings settings) {
